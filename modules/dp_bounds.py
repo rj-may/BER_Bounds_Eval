@@ -20,7 +20,7 @@ class dp_bounds:
         self.__params0 = params0
         self.__params1 = params1
         self.__MC_num = MC_Num
-        self.__handle_errors = False
+        self.__handle_errors = handle_errors
 
 
         if self.__distr_type not in accepted_distr:
@@ -108,7 +108,7 @@ class dp_bounds:
             data0 =  np.random.multivariate_normal(mean0, covariance0, n0)
             data1 =  np.random.multivariate_normal(mean1, covariance1, n0)
         
-            FR  = self. __get_FR(data0, data1)
+            FR  = self.__get_FR(data0, data1)
 
             Dp  = 1 - FR * (n0 + n1)/ (2 * n0 * n1)
 
@@ -122,14 +122,15 @@ class dp_bounds:
                 print("You are using distributions of size: ", n0, n1)
 
             if Up <= 0:
-                if get_handle_errors():
+                print(self.get_handle_errors() )
+                if self.get_handle_errors() == True:
                     print("Uh oh, you got a Up  = ", Up,  " We are omitting that from the data set")
                     continue
-                elif get_handle_errors() == False:
+                elif self.get_handle_errors() == False:
 
                     print("Uh oh, you got a Up  = ", Up)
                     print("The FR statistics was ", FR)
-                    print("We were on interation  ", i )
+                    print("We were on iteration  ", i )
                     self.__get_FR(data0, data1, True)
             
 
