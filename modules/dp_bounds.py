@@ -11,21 +11,19 @@ Distribution types this code works for
 Multivariate normal: "mv_normal"
 
 '''
-class dp_bounds
+accepted_distr = ["mv_normal"]
+
+class dp_bounds:
 
     def __init__(self, dist_type, params0, params1, MC_Num, handle_errors = False):
         self.__distr_type = dist_type
         self.__params0 = params0
-        self.__params0 = param1
+        self.__params1 = params1
         self.__MC_num = MC_Num
         self.__handle_errors = False
 
 
-        if self.__distr_type == "mv_normal":
-            # params should be (mean1, covariance1, n0) where means is  1 x n list and covar is n x n
-            mean0, covariance0, n0 = self.__params0
-            mean1, covariance1, n1 = self.__params1
-        else:
+        if self.__distr_type not in accepted_distr:
             print("Not a programmed distribution " )
         
         self.__lower_bounds, self.__upper_bounds, self.__lower_stats, self.__upper_stats =  self.__simulate(self.__MC_num)
@@ -33,18 +31,16 @@ class dp_bounds
     def get_bounds(self):
         return [self.__lower_bounds, self.__upper_bounds]
 
-    def get_bounds_stats(self)
+    def get_bounds_stats(self):
         return [self.__lower_stats, self.__upper_stats]
 
-    # def __get_MC_num(self):
-    #     return self.__MC_num
+    def __get_MC_num(self):
+        return self.__MC_num
                
     def __get_distr_type(self):
         return self.__distr_type
 
-    def __calc_bounds(self, up):
-    #     print(up)
-            
+    def __calc_bounds(self, up):            
         lower = 1/2 - 1/2 *math.sqrt(up) 
         upper = 1/2 - 1/2 * up 
         return lower, upper 
@@ -98,16 +94,21 @@ class dp_bounds
 
 
     def __simulate(self, MC_iter):
-        MC_iter = __get_MC_num()
+        MC_iter = MC_iter
         lower_bounds =[]
         upper_bounds = []
 
+        if self.__get_distr_type() == "mv_normal":    
+            # params should be (mean1, covariance1, n0) where means is  1 x n list and covar is n x n
+            mean0, covariance0, n0 = self.__params0
+            mean1, covariance1, n1 = self.__params1
+
         for i in range(MC_iter):
-            if self.__get_distr_type() == "mv_norm"
-                data0 =  np.random.multivariate_normal(mean0, covariance0, n0)
-                data1 =  np.random.multivariate_normal(mean1, covariance1, n0)
+            
+            data0 =  np.random.multivariate_normal(mean0, covariance0, n0)
+            data1 =  np.random.multivariate_normal(mean1, covariance1, n0)
         
-            FR  =  __get_FR(data0, data1)
+            FR  = self. __get_FR(data0, data1)
 
             Dp  = 1 - FR * (n0 + n1)/ (2 * n0 * n1)
 
@@ -120,16 +121,16 @@ class dp_bounds
                 Up = 4 * p * q * Dp + (p-q)**2
                 print("You are using distributions of size: ", n0, n1)
 
-            if Up < = 0
+            if Up <= 0:
                 if get_handle_errors():
-                    print("Uh oh, you got a Up  = ", Up " We are omitting that from the data set")
+                    print("Uh oh, you got a Up  = ", Up,  " We are omitting that from the data set")
                     continue
                 elif get_handle_errors() == False:
 
                     print("Uh oh, you got a Up  = ", Up)
                     print("The FR statistics was ", FR)
                     print("We were on interation  ", i )
-                    __get_FR(data0, data1, True)
+                    self.__get_FR(data0, data1, True)
             
 
             lower, upper = self.__calc_bounds(Up)
