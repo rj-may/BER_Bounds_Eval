@@ -15,18 +15,22 @@ accepted_distr = ["mv_normal"]
 
 class dp_bounds:
 
-    def __init__(self, dist_type, params0, params1, MC_Num, handle_errors = False):
+    def __init__(self, dist_type, params0, params1, MC_Num, handle_errors = False, suppress_message = False):
         self.__distr_type = dist_type
         self.__params0 = params0
         self.__params1 = params1
         self.__MC_num = MC_Num
         self.__handle_errors = handle_errors
+        self.__suppress_message = suppress_message
 
 
         if self.__distr_type not in accepted_distr:
             print("Not a programmed distribution " )
         
         self.__lower_bounds, self.__upper_bounds, self.__lower_stats, self.__upper_stats =  self.__simulate(self.__MC_num)
+
+
+
 
     def get_bounds(self):
         return [self.__lower_bounds, self.__upper_bounds]
@@ -47,6 +51,12 @@ class dp_bounds:
     
     def get_handle_errors(self):
         return self.__handle_errors
+
+    def __get_handle_errors(self):
+        return self.__handle_errors
+    
+    def __get_suppress_message(self):
+        return self.__suppress_message
 
 
     def __get_FR(self, data1, data2, plot = False):    
@@ -121,10 +131,10 @@ class dp_bounds:
                 Up = 4 * p * q * Dp + (p-q)**2
                 print("You are using distributions of size: ", n0, n1)
 
-            if Up <= 0:
-                print(self.get_handle_errors() )
+            if Up < 0:
                 if self.get_handle_errors() == True:
-                    print("Uh oh, you got a Up  = ", Up,  " We are omitting that from the data set")
+                    if self.__get_suppress_message() == False:
+                        print("Uh oh, you got a Up  = ", Up,  " We are omitting that from the data set")
                     continue
                 elif self.get_handle_errors() == False:
 
@@ -143,6 +153,27 @@ class dp_bounds:
         upper_stats = stats.describe(upper_bounds)
 
         return lower_bounds, upper_bounds, lower_stats, upper_stats
+        '''
+        stats.describe documentaiton
+
+    Number of observations (length of data along axis). When ‘omit’ is chosen as nan_policy, the length along each axis slice is counted separately.
+
+minmax: tuple of ndarrays or floats
+    Minimum and maximum value of a along the given axis. 
+
+    meanndarray or float     Arithmetic mean of a along the given axis.
+
+
+variancendarray or float
+    Unbiased variance of a along the given axis; denominator is number of observations minus one.
+
+skewnessndarray or float
+    Skewness of a along the given axis, based on moment calculations with denominator equal to the number of observations, i.e. no degrees of freedom correction.
+
+kurtosisndarray or float
+    Kurtosis (Fisher) of a along the given axis. The kurtosis is normalized so that it is zero for the normal distribution. No degrees of freedom are used.
+
+        '''
         
 
 
