@@ -32,10 +32,10 @@ def Bhattacharyya_bounds(params1, params2):
         return None
     dist = Bhattacharyya_dist(params1, params2, numpycheck=True)
 
-    error_rate = 1/2* ( 1 - np.sqrt(dist)) 
-    
-    bound1 = 1/2  - 1/2 * np.sqrt( 1- dist * dist)
-    bound2 =  1/2 *   dist
+    # error_rate = 1/2* ( 1 - np.sqrt(dist)) 
+    BC  = np.exp( -1 * dist ) # claculate the Bhattacharyya coefficient
+    bound1 = 1/2  - 1/2 * np.sqrt( 1- BC * BC)
+    bound2 =  1/2 *   BC
     
     return bound1, bound2 
 

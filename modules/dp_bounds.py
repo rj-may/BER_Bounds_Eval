@@ -13,9 +13,17 @@ Multivariate normal: "mv_normal"
 '''
 accepted_distr = ["mv_normal"]
 
+'''
+error handling
+3 options:
+'omit' : omit it from the data set and continues on 
+'no': prints some statistics and tries to give you a plot
+'worst': gives each the upper bound and  a lower bound value of .5 
+'''
+
 class dp_bounds:
 
-    def __init__(self, dist_type, params0, params1, MC_Num, handle_errors = False, suppress_message = False):
+    def __init__(self, dist_type, params0, params1, MC_Num, handle_errors = 'no', suppress_message = False):
         self.__distr_type = dist_type
         self.__params0 = params0
         self.__params1 = params1
@@ -30,13 +38,13 @@ class dp_bounds:
         self.__lower_bounds, self.__upper_bounds, self.__lower_stats, self.__upper_stats =  self.__simulate(self.__MC_num)
 
 
-
-
-    def get_bounds(self):
+    #these two funcitons are main two returnables for 
+    def get_bounds(self): 
         return [self.__lower_bounds, self.__upper_bounds]
 
     def get_bounds_stats(self):
         return [self.__lower_stats, self.__upper_stats]
+
 
     def __get_MC_num(self):
         return self.__MC_num
@@ -132,19 +140,23 @@ class dp_bounds:
                 print("You are using distributions of size: ", n0, n1)
 
             if Up < 0:
-                if self.get_handle_errors() == True:
+                if self.__get_handle_errors() == 'omit':
                     if self.__get_suppress_message() == False:
                         print("Uh oh, you got a Up  = ", Up,  " We are omitting that from the data set")
                     continue
-                elif self.get_handle_errors() == False:
+                elif self.__get_handle_errors()== 'no':
 
                     print("Uh oh, you got a Up  = ", Up)
                     print("The FR statistics was ", FR)
                     print("We were on iteration  ", i )
                     self.__get_FR(data0, data1, True)
-            
 
-            lower, upper = self.__calc_bounds(Up)
+                elif self.__get_handle_errors() == 'worst':
+                    # print("here")
+                    lower, upper = .5, .5
+            else:
+
+                lower, upper = self.__calc_bounds(Up)
 
             lower_bounds.append(lower)
             upper_bounds.append(upper)
