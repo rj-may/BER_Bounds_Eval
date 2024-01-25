@@ -124,7 +124,7 @@ class dp_bounds:
         for i in range(MC_iter):
             
             data0 =  np.random.multivariate_normal(mean0, covariance0, n0)
-            data1 =  np.random.multivariate_normal(mean1, covariance1, n0)
+            data1 =  np.random.multivariate_normal(mean1, covariance1, n1)
         
             FR  = self.__get_FR(data0, data1)
 
