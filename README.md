@@ -7,4 +7,4 @@ I will be  running simulation-based comparisons of different methods of estimati
 ### Code description
 
 I am going to try and provide up to date code descriptions of in the software manual
-[link](https://github.com/rj-may/MS_Research/blob/master/Docs/Table_of_Contents)
+[here](https://github.com/rj-may/MS_Research/blob/master/Docs/Table_of_Contents)
