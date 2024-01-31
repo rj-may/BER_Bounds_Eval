@@ -6,7 +6,7 @@
 
 Introduction
 
-The DP Bounds Calculator is a Python tool designed to calculate lower and upper bounds for the using a DP measure  (DP) between two multivariate normal distributions. 
+The DP Bounds Calculator is a Python tool designed to calculate lower and upper bounds for the using a divergence measure defined [here](https://ieeexplore.ieee.org/document/7254229) (DP) between two multivariate normal distributions. 
 
 
 Ensure you have the necessary libraries installed:
