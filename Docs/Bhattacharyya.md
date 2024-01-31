@@ -85,7 +85,9 @@ The Bhattacharyya Bounds Calculator provides a convenient way to assess the simi
 
 
 
-# Bhattacharyya.py
+## Functions
+
+``` Bhattacharyya.py  ```
 
 This file can calculate what the class structure can but you can run things one piece at  a time. 
 
