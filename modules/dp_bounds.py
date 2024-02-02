@@ -23,8 +23,8 @@ error handling
 
 class dp_bounds:
 
-    def __init__(self, dist_type, params0, params1, MC_Num, handle_errors = 'worst', suppress_message = False):
-        self.__distr_type = dist_type
+    def __init__(self, distr_type, params0, params1, MC_Num, handle_errors = 'worst', suppress_message = False):
+        self.__distr_type = distr_type
         self.__params0 = params0
         self.__params1 = params1
         self.__MC_num = MC_Num
@@ -45,10 +45,29 @@ class dp_bounds:
     def get_bounds_stats(self):
         return [self.__lower_stats, self.__upper_stats]
 
+    ## some informational stuff
+    def print_info(self):
+        params = self.__get_params()
+        print("The distribution type is: ", self.__get_distr_type(), "with ", self.__get_MC_num(), " Monte Carlo Iterations")
+        print("Distribution 0 is ", params[0] )
+        print("Distribution 1 is ", params[1] )
+    
+    def get_info(self):
+        return [self.__distr_type, self.__get_params()[0], self.__get_params()[1], self.get_MC_num()]
+    
+
+
+    def get_MC_num(self):
+        return self.__MC_num
+
+    def __get_params(self):
+        return [self.__params0, self.__params1]
+
 
     def __get_MC_num(self):
         return self.__MC_num
-               
+        
+
     def __get_distr_type(self):
         return self.__distr_type
 
