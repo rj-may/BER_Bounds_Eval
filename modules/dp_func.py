@@ -3,6 +3,21 @@ from scipy.spatial import distance
 from scipy.sparse.csgraph import minimum_spanning_tree
 import math
 
+
+def get_bounds(data1, data2, n0, n1):
+    FR = get_FR(data1, data2, False)
+    
+    Dp = 1 - FR * (n0 + n1)/ (2 * n0 * n1)
+    if n0 == n1:
+        return calc_bounds(Dp)
+    else:
+        p = n0 / (n0 +n1)
+        q = n1/ (n0 +n1)
+        up = 4 * p * q * Dp  + (p-q)^2
+        return calc_bounds(up)
+    
+
+
 def get_FR(data1, data2, plot = False):    
         dataset = np.concatenate([data1, data2])
 
@@ -40,16 +55,20 @@ def get_FR(data1, data2, plot = False):
                     color = 'purple'
                     FR_statistic  +=1
 
-                ax.plot(dataset[edge, 0], dataset[edge, 1], dataset[edge, 2], c=color, )
+                ax.plot(dataset[edge, 0], dataset[edge, 1], dataset[edge, 2], c=color)
             plot.show()
                 
         return FR_statistic
 
-def calc_bounds(up):
-    lower = 1/2 - 1/2 *math.sqrt(up) 
-    upper = 1/2 - 1/2 * up 
-    return lower, upper 
     
+def calc_bounds(up):
+    if up> 0:
+        lower = 1/2 - 1/2 *math.sqrt(up) 
+        upper = 1/2 - 1/2 * up 
+    else:
+        lower, upper = .5 , .5
+    return lower, upper 
+
 def analyze(data1, data2):
 
     dataset = np.concatenate([data1, data2])
