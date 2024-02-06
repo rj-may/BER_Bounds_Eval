@@ -2,8 +2,26 @@ import numpy as np
 from numpy.linalg import inv
 from numpy.linalg import det
 
+### this is the function to use
+# it accepts parameters based on the calculated distributions
+def Bhattacharyya_bounds(params1, params2):
+
+    test  = test_values(params1) and test_values(params2)
+    if test == False: #if the test fails
+        return None
+    dist = __Bhattacharyya_dist(params1, params2, numpycheck=True)
+
+    # error_rate = 1/2* ( 1 - np.sqrt(dist)) 
+    BC  = np.exp( -1 * dist ) # claculate the Bhattacharyya coefficient
+    bound1 = 1/2  - 1/2 * np.sqrt( 1- BC * BC)
+    bound2 =  1/2 *   BC
+    
+    return bound1, bound2 
+
+
+
 # this function calculates the distance between two Distributions with the Bhattacharyya distance
-def Bhattacharyya_dist(params1, params2, numpycheck = False):
+def __Bhattacharyya_dist(params1, params2, numpycheck = False):
 
 
     if numpycheck == False:
@@ -19,28 +37,16 @@ def Bhattacharyya_dist(params1, params2, numpycheck = False):
 
     Sigma = 1/2 * ( covar1 + covar2)
 
-    Mahal_dist_2 = Mahalanobis_dist_sq(mu1, mu2, Sigma)
+    Mahal_dist_2 = __Mahalanobis_dist_sq(mu1, mu2, Sigma)
     
     dist =  1/8  * Mahal_dist_2 + 1/2 * np.log(det(Sigma) / np.sqrt((det(covar1 * covar2)  ) )   )
 
     return dist
 
-def Bhattacharyya_bounds(params1, params2):
-
-    test  = test_values(params1) and test_values(params2)
-    if test == False: #if the test fails
-        return None
-    dist = Bhattacharyya_dist(params1, params2, numpycheck=True)
-
-    # error_rate = 1/2* ( 1 - np.sqrt(dist)) 
-    BC  = np.exp( -1 * dist ) # claculate the Bhattacharyya coefficient
-    bound1 = 1/2  - 1/2 * np.sqrt( 1- BC * BC)
-    bound2 =  1/2 *   BC
-    
-    return bound1, bound2 
 
 
-def  Mahalanobis_dist_sq(mu1, mu2, covar): #this returns the square of Mahalanobis distance
+
+def  __Mahalanobis_dist_sq(mu1, mu2, covar): #this returns the square of Mahalanobis distance
     mu_diff = mu1 - mu2
 
     return np.dot(mu_diff, np.matmul( inv(covar) , mu_diff)  )

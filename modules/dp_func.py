@@ -4,22 +4,24 @@ from scipy.sparse.csgraph import minimum_spanning_tree
 import math
 
 
-def get_bounds(data1, data2, n0, n1):
-    FR = get_FR(data1, data2, False)
-    
+def get_bounds_dp(data0, data1):
+    FR = __get_FR(data0, data1, False)
+    n0 = len(data0)
+    n1 = len(data1)
+
     Dp = 1 - FR * (n0 + n1)/ (2 * n0 * n1)
     if n0 == n1:
-        return calc_bounds(Dp)
+        return __calc_bounds(Dp)
     else:
         p = n0 / (n0 +n1)
         q = n1/ (n0 +n1)
         up = 4 * p * q * Dp  + (p-q)^2
-        return calc_bounds(up)
+        return __calc_bounds(up)
     
 
 
-def get_FR(data1, data2, plot = False):    
-        dataset = np.concatenate([data1, data2])
+def __get_FR(data0, data1, plot = False):    
+        dataset = np.concatenate([data0, data1])
 
         FR_statistic =  0 
         # Calculate pairwise distances
@@ -33,9 +35,9 @@ def get_FR(data1, data2, plot = False):
 
         if plot == False:
             for edge in edges:
-                if dataset[edge[0]] in data1 and dataset[edge[1]] in data1:
+                if dataset[edge[0]] in data0 and dataset[edge[1]] in data0:
                     continue
-                elif dataset[edge[0]] in data2 and dataset[edge[1]] in data2:
+                elif dataset[edge[0]] in data1 and dataset[edge[1]] in data1:
                     continue
                 else:
                     FR_statistic  +=1
@@ -43,13 +45,13 @@ def get_FR(data1, data2, plot = False):
         else: #if we want to plot things
             fig = plt.figure(figsize = (7,11), )
             ax = fig.add_subplot(111, projection='3d')
-            ax.scatter(data1[:, 0], data1[:, 1], data1[:, 2], c='blue', marker='o')
-            ax.scatter(data2[:, 0], data2[:, 1], data2[:, 2], c='red', marker='o')
+            ax.scatter(data0[:, 0], data0[:, 1], data0[:, 2], c='blue', marker='o')
+            ax.scatter(data1[:, 0], data1[:, 1], data1[:, 2], c='red', marker='o')
 
             for edge in edges:
-                if dataset[edge[0]] in data1 and dataset[edge[1]] in data1:
+                if dataset[edge[0]] in data0 and dataset[edge[1]] in data0:
                     color = 'blue'
-                elif dataset[edge[0]] in data2 and dataset[edge[1]] in data2:
+                elif dataset[edge[0]] in data1 and dataset[edge[1]] in data1:
                     color = 'red'
                 else:
                     color = 'purple'
@@ -61,17 +63,17 @@ def get_FR(data1, data2, plot = False):
         return FR_statistic
 
     
-def calc_bounds(up):
+def __calc_bounds(up):
+    upper = 1/2 - 1/2 * up 
     if up> 0:
         lower = 1/2 - 1/2 *math.sqrt(up) 
-        upper = 1/2 - 1/2 * up 
     else:
-        lower, upper = .5 , .5
+        lower =.5
     return lower, upper 
 
-def analyze(data1, data2):
+def analyze(data0, data1):
 
-    dataset = np.concatenate([data1, data2])
+    dataset = np.concatenate([data0, data1])
 
     FR_statistic =  0 
 
@@ -94,10 +96,10 @@ def analyze(data1, data2):
     ax.scatter(dataset[:, 0], dataset[:, 1], dataset[:, 2], c='black', marker='o')
 
     for edge in edges:
-        if dataset[edge[0]] in data1 and dataset[edge[1]] in data1:
+        if dataset[edge[0]] in data0 and dataset[edge[1]] in data0:
             color = 'blue'
 #             marker = 'blue'
-        elif dataset[edge[0]] in data2 and dataset[edge[1]] in data2:
+        elif dataset[edge[0]] in data1 and dataset[edge[1]] in data1:
             color = 'red'
 #             marker = "r"
         else:
