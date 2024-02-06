@@ -4,7 +4,7 @@ from numpy.linalg import det
 
 ### this is the function to use
 # it accepts parameters based on the calculated distributions
-def Bhattacharyya_bounds(params1, params2):
+def Bhattacharyya_bounds(params1, params2, handle_errors = "worst"):
 
     test  = test_values(params1) and test_values(params2)
     if test == False: #if the test fails
@@ -13,10 +13,17 @@ def Bhattacharyya_bounds(params1, params2):
 
     # error_rate = 1/2* ( 1 - np.sqrt(dist)) 
     BC  = np.exp( -1 * dist ) # claculate the Bhattacharyya coefficient
-    bound1 = 1/2  - 1/2 * np.sqrt( 1- BC * BC)
-    bound2 =  1/2 *   BC
     
-    return bound1, bound2 
+    upper =  1/2 *   BC
+    if BC >=1:
+        if handle_errors == "worst": #thoeretical worst value for each 
+            lower, upper = .5, .5
+        elif handle_errors == "lower":
+            lower =.5
+    else:
+        lower = 1/2  - 1/2 * np.sqrt( 1- BC * BC)
+
+    return lower, upper 
 
 
 

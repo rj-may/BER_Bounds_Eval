@@ -69,7 +69,7 @@ def __calc_bounds(up, handle_errors):
         lower = 1/2 - 1/2 *math.sqrt(up) 
     elif handle_errors == "worst": # worst case scenario for both 
         upper, lower = .5, .5
-    elif handle_errors == "lower_only":
+    elif handle_errors == "lower":
         lower = .5 
     else:
         lower = 1/2 - 1/2 *math.sqrt(up) 
