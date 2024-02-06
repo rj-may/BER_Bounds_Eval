@@ -4,19 +4,19 @@ from scipy.sparse.csgraph import minimum_spanning_tree
 import math
 
 
-def get_bounds_dp(data0, data1):
+def get_bounds_dp(data0, data1, handle_errors = "worst"):
     FR = __get_FR(data0, data1, False)
     n0 = len(data0)
     n1 = len(data1)
 
     Dp = 1 - FR * (n0 + n1)/ (2 * n0 * n1)
     if n0 == n1:
-        return __calc_bounds(Dp)
+        return __calc_bounds(Dp, handle_errors)
     else:
         p = n0 / (n0 +n1)
         q = n1/ (n0 +n1)
         up = 4 * p * q * Dp  + (p-q)^2
-        return __calc_bounds(up)
+        return __calc_bounds(up, handle_errors)
     
 
 
@@ -63,12 +63,16 @@ def __get_FR(data0, data1, plot = False):
         return FR_statistic
 
     
-def __calc_bounds(up):
-    upper = 1/2 - 1/2 * up 
+def __calc_bounds(up, handle_errors):
+    upper = 1/2 - 1/2 * up
     if up> 0:
         lower = 1/2 - 1/2 *math.sqrt(up) 
+    elif handle_errors == "worst": # worst case scenario for both 
+        upper, lower = .5, .5
+    elif handle_errors == "lower_only":
+        lower = .5 
     else:
-        lower =.5
+        lower = 1/2 - 1/2 *math.sqrt(up) 
     return lower, upper 
 
 def analyze(data0, data1):

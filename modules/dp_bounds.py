@@ -23,7 +23,7 @@ error handling
 
 class dp_bounds:
 
-    def __init__(self, distr_type, params0, params1, MC_Num, handle_errors = 'worst', suppress_message = False):
+    def __init__(self, distr_type, params0, params1, MC_Num=500, handle_errors = 'worst', suppress_message = False):
         self.__distr_type = distr_type
         self.__params0 = params0
         self.__params1 = params1
