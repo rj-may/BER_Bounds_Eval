@@ -13,6 +13,8 @@ def get_tight_bounds_knn(data0, data1, alpha=50, k=10):
 
     p = len(data0[0]) ## the dimension of the data sets
     n0 = len(data0)
+    n1 = len(data1)
+
 
     # Fit k-Nearest Neighbors model and get densitities for data set 1
     knn = NearestNeighbors(n_neighbors=k)
@@ -42,22 +44,23 @@ $$ p_k(x)  =\frac{k}{n} \frac{1}{ \frac{\pi^{p/2}}{\Gamma(p/2+1)}  \|x-x_k \|^p}
 def __knn_density_calc(distances_matrix, k, p, n): # p is the dimension 
     vec = np.zeros(len(distances_matrix))
         
-    gam_p = math.gamma( p /2 + 1)
-    pi_power = (math.pi)**(p/ 2)
-    vol_mult = pi_power / gam_p
 
     for i, dist_lst in enumerate(distances_matrix):
         dist = dist_lst[k-1]
-        vol=  (dist**p) * vol_mult
+        vol=  __calculate_volume(p, dist)
         vec[i] =  k /  ( n * vol  )
     
     return vec
 
+def __calculate_volume(d, radius):
+    return (np.pi**(d/2)) / math.gamma(d/2 + 1) * radius**d
 
 def __calc_tight_bounds_via_knn_density(density0, density1, alpha):    
     # fx = 0.5 * (density0 + density1)
 
-    px = density0 / (density0 + density1)
+    px = density1 / (density0 + density1)
+    
+    n = len(density0) + len(density1) 
     
     glx = np.mean( g_L(px, alpha)    )
     gux = np.mean( g_U(px, alpha, g_L, g_C)  )
