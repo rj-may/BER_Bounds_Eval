@@ -65,14 +65,14 @@ def __get_FR(data0, data1, plot = False):
     
 def __calc_bounds(up, handle_errors):
     upper = 1/2 - 1/2 * up
-    if up> 0:
+    if up >= 0:
         lower = 1/2 - 1/2 *math.sqrt(up) 
     elif handle_errors == "worst": # worst case scenario for both 
         upper, lower = .5, .5
     elif handle_errors == "lower":
         lower = .5 
     else:
-        lower = 1/2 - 1/2 *math.sqrt(up) 
+        lower = 1/2 - 1/2 *math.sqrt(up) #note this is the same as what is above 
     return lower, upper 
 
 def analyze(data0, data1):

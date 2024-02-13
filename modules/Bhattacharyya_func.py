@@ -12,10 +12,10 @@ def Bhattacharyya_bounds(params1, params2, handle_errors = "worst"):
     dist = __Bhattacharyya_dist(params1, params2, numpycheck=True)
 
     # error_rate = 1/2* ( 1 - np.sqrt(dist)) 
-    BC  = np.exp( -1 * dist ) # claculate the Bhattacharyya coefficient
+    BC  = np.exp( -1 * dist ) # calculate the Bhattacharyya coefficient
     
     upper =  1/2 *   BC
-    if BC >=1:
+    if BC > 1:
         if handle_errors == "worst": #thoeretical worst value for each 
             lower, upper = .5, .5
         elif handle_errors == "lower":

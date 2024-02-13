@@ -17,16 +17,15 @@ def get_tight_bounds_knn(data0, data1, alpha=50, k=10):
 
 
     # Fit k-Nearest Neighbors model and get densitities for data set 1
-    knn = NearestNeighbors(n_neighbors=k)
+    knn = NearestNeighbors(n_neighbors=k, algorithm = 'brute')
     knn.fit(data0)
     distances, indices = knn.kneighbors(X) # get distance to the  1,2,... kth nearest neighbor across the space x
 
     density0 = __knn_density_calc(distances, k, p, n0) ## calculate density based off the distances, k, dim, and sample size
 
     # Fit k-Nearest Neighbors model and get densitities for data set 2
-    n1 = len(data1)
 
-    knn = NearestNeighbors(n_neighbors=k)
+    knn = NearestNeighbors(n_neighbors=k, algorithm= 'brute')
     knn.fit(data1)
     distances, indices = knn.kneighbors(X)    
     
@@ -44,17 +43,19 @@ $$ p_k(x)  =\frac{k}{n} \frac{1}{ \frac{\pi^{p/2}}{\Gamma(p/2+1)}  \|x-x_k \|^p}
 def __knn_density_calc(distances_matrix, k, p, n): # p is the dimension 
     vec = np.zeros(len(distances_matrix))
         
-
-    for i, dist_lst in enumerate(distances_matrix):
-        dist = dist_lst[k-1]
+#     for i, dist_lst in enumerate(distances_matrix):
+#         dist = dist_lst[k-1]
+#         vol=  __calculate_volume(p, dist)
+#         vec[i] =  k /  ( n * vol  )
+    for i in range(len(vec)):
+        dist = distances_matrix[i][k-1]
         vol=  __calculate_volume(p, dist)
-        vec[i] =  k /  ( n * vol  )
-    
+        vec[i] =  k /  ( n * vol  ) ### some people use k-1 for variance purposes
     return vec
 
 def __calculate_volume(d, radius):
-    return (np.pi**(d/2)) / math.gamma(d/2 + 1) * radius**d
-
+    return ((np.pi)**(d/2) ) / math.gamma((d/2) + 1) * (radius**d)
+    
 def __calc_tight_bounds_via_knn_density(density0, density1, alpha):    
     # fx = 0.5 * (density0 + density1)
 
