@@ -79,3 +79,18 @@ def g_C(p):
 
 def g_U(p, alpha,  g_L, g_C):
     return g_L(p, alpha) + (1 - 2 * g_L(0.5, alpha)) * g_C(p)
+
+
+def __multiplier(n):
+    num = n * (n + 2)**2 * math.gamma((n + 2) / 2)**(-4 / n) * ((n - 2) / n)**(2 + n / 2)
+    denom = n**2 - 6 * n + 16
+    return (num / denom)**(n / (n + 4))
+
+
+def knn_num_calc(N, n):# N is size of set and n is dimension
+    mult = __multiplier(n)
+    N_exp = N**(4/ (n+4))
+    val=  int( mult * N_exp)
+    if n <=2:
+        print("This function doesn't work for dimension <3")
+    return val
