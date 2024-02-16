@@ -128,7 +128,7 @@ class bounds_class:
                 sim_params0 = self.__obs_params(data0)
                 sim_params1 = self.__obs_params(data1)
 
-                Bha_l,Bha_u = calc_Bhattacharyya_bounds(sim_params0, sim_params1, self.get_handle_errors_Bha())
+                Bha_l,Bha_u = calc_Bhattacharyya_bounds(sim_params0, sim_params1, handle_errors = self.get_handle_errors_Bha())
 
                 self.__append_Bha(Bha_l, Bha_u)
 
@@ -162,7 +162,7 @@ class bounds_class:
                 sim_params0 = self.__obs_params(data0)
                 sim_params1 = self.__obs_params(data1)
 
-                l, u = calc_Bhattacharyya_bounds(sim_params0, sim_params1, self.get_handle_errors_Bha())
+                l, u = calc_Bhattacharyya_bounds(sim_params0, sim_params1, handle_errors = self.get_handle_errors_Bha())
                 lower_bounds_Bha.append(l)
                 upper_bounds_Bha.append(u)
             

@@ -4,57 +4,86 @@ from numpy.linalg import det
 
 ### this is the function to use
 # it accepts parameters based on the calculated distributions
-def Bhattacharyya_bounds(params1, params2, handle_errors = "worst"):
+#class probability assumes distributions of equal class sizes
 
-    test  = test_values(params1) and test_values(params2)
+
+### This really only works for class that 
+
+def Bhattacharyya_bounds(params0, params1, class_prob = [1/2, 1/2], handle_errors = "worst"):
+
+    test  = test_values(params0) and test_values(params1)
     if test == False: #if the test fails
         return None
-    dist = __Bhattacharyya_dist(params1, params2, numpycheck=True)
+    if class_prob[0] + class_prob[1] != 1:
+        print("Why are the class distributions not summing to 1?")
+
+    dist = __Bhattacharyya_dist(params0, params1, class_prob, numpycheck=True)
 
     # error_rate = 1/2* ( 1 - np.sqrt(dist)) 
     BC  = np.exp( -1 * dist ) # calculate the Bhattacharyya coefficient
+    # print(BC)
+    P_c0 = class_prob[0]
+    P_c1 = class_prob[1]
     
-    upper =  1/2 *   BC
+    upper =    BC * np.sqrt(P_c0 *P_c1  )
     if BC > 1:
         if handle_errors == "worst": #thoeretical worst value for each 
             lower, upper = .5, .5
         elif handle_errors == "lower":
-            lower =.5
+            lower =.5 
     else:
-        lower = 1/2  - 1/2 * np.sqrt( 1- BC * BC)
+        lower = 1/2  - 1/2 * np.sqrt( 1- 4 *P_c0 *P_c1 *   (BC * BC))
 
     return lower, upper 
 
 
 
 # this function calculates the distance between two Distributions with the Bhattacharyya distance
-def __Bhattacharyya_dist(params1, params2, numpycheck = False):
+def __Bhattacharyya_dist(params0, params1, class_prob = [0.5, 0.5],  numpycheck = False):
 
-
-    if numpycheck == False:
-        test  = test_values(params1)  and test_values(params2)
+    if numpycheck == True:
+        test  = test_values(params0)  and test_values(params1)
         if test == False:
             return None
+
+    mu0 = params0[0]
+    covar0 = params0[1]
 
     mu1 = params1[0]
     covar1 = params1[1]
 
-    mu2 = params2[0]
-    covar2 = params2[1]
+    Sigma = class_prob[0]* covar0 +  class_prob[1] * covar1
 
-    Sigma = 1/2 * ( covar1 + covar2)
-
-    Mahal_dist_2 = __Mahalanobis_dist_sq(mu1, mu2, Sigma)
+    Mahal_dist_2 = __Mahalanobis_dist_sq(mu0, mu1, Sigma)
     
-    dist =  1/8  * Mahal_dist_2 + 1/2 * np.log(det(Sigma) / np.sqrt((det(covar1 * covar2)  ) )   )
+    dist =  1/8  * Mahal_dist_2 + 1/2 * np.log(det(Sigma) / np.sqrt((det(covar0 * covar1)  ) )   )
 
     return dist
 
 
+def Mahalanobis_upper( params0, params1, class_prob = [.5, .5]):
+    mu0 = params0[0]
+    covar0 = params0[1]
+
+    mu1 = params1[0]
+    covar1 = params1[1]
+
+    P_c0 = class_prob[0]
+    P_c1 = class_prob[1]
+
+    num = 2 * P_c0 * P_c1
+    
+    sigma_for_Mah = class_prob[0] * covar0 + class_prob[1] * covar1
+    Mahal_dist_2 = __Mahalanobis_dist_sq( mu0, mu1, sigma_for_Mah)
+    denom = 1 + P_c0 * P_c1 * Mahal_dist_2
+
+    return (num/denom)
 
 
-def  __Mahalanobis_dist_sq(mu1, mu2, covar): #this returns the square of Mahalanobis distance
-    mu_diff = mu1 - mu2
+
+def  __Mahalanobis_dist_sq(mu0, mu1, covar): #this returns the square of Mahalanobis distance
+    ### the covariance matrix should be a weighted  covariance matrix of each distribution  
+    mu_diff = mu0 - mu1
 
     return np.dot(mu_diff, np.matmul( inv(covar) , mu_diff)  )
 

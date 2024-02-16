@@ -1,44 +1,72 @@
-'''
-this function uses the logic of  Arbitrarily Tight Upper and Lower Bounds  on the Bayesian Probability of Error
-and a knn_density calculator for the distributions
-
- '''
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import math
 
-def get_tight_bounds_knn(data0, data1, alpha=50, k=10):
 
+def Bhattacharyya_knn_bounds(data0, data1, k=0 , handle_errors = "worst"):
+    if k == 0:
+        k = knn_num_calc(len(data0), len(data0[0]))
+
+    ## this is equivalent to the Bhattacharyya distance but we are using the knn densities
+    BC =  __Bhattacharyya_coef_via_knn(data0, data1, k)
+
+    # print(BC)
+
+    # error_rate = 1/2* ( 1 - np.sqrt(dist)) 
+
+    P_c0 = len(data0) /  ( len(data0) +  len(data1))
+    P_c1 = len(data1) /( len(data0) +  len(data1))
+    
+    upper =    BC * np.sqrt(P_c0 *P_c1  )
+    if BC > 1:
+        if handle_errors == "worst": #thoeretical worst value for each 
+            lower, upper = .5, .5
+        elif handle_errors == "lower":
+            lower =.5 
+    else:
+        lower = 1/2  - 1/2 * np.sqrt( 1- 4 *P_c0 *P_c1 *   (BC * BC))
+
+    return lower, upper 
+
+
+def __Bhattacharyya_coef_via_knn(data0, data1, k) :
     X = np.concatenate([data0, data1])# merge two class data sets to get our X space
 
     p = len(data0[0]) ## the dimension of the data sets
     n0 = len(data0)
     n1 = len(data1)
 
-
     # Fit k-Nearest Neighbors model and get densitities for data set 1
     knn = NearestNeighbors(n_neighbors=k, algorithm = 'brute')
     knn.fit(data0)
     distances, indices = knn.kneighbors(X) # get distance to the  1,2,... kth nearest neighbor across the space x
-
     density0 = __knn_density_calc(distances, k, p, n0) ## calculate density based off the distances, k, dim, and sample size
 
     # Fit k-Nearest Neighbors model and get densitities for data set 2
-
     knn = NearestNeighbors(n_neighbors=k, algorithm= 'brute')
     knn.fit(data1)
     distances, indices = knn.kneighbors(X)    
-    
     density1 = __knn_density_calc(distances, k, p, n1)
 
-    lower, upper = __calc_tight_bounds_via_knn_density(density0, density1, alpha)
+    Px = 1/ len(X) #probability of x
+    Pc0 =n0 / len(X) #probabilit of class 0
+    Pc1 = n1 / len(X) # prob of class 1
 
-    return lower, upper
+    p0_x = density0 / (density0  + density1) ## P(c0| x)
+    p1_x = density1 / (density0 + density1) ## P(c1 | x)
 
-'''
-The following formula uses formula for n- dimesional sphere 
-$$ p_k(x)  =\frac{k}{n} \frac{1}{ \frac{\pi^{p/2}}{\Gamma(p/2+1)}  \|x-x_k \|^p}.$$
-'''
+    # BC = np.sum(np.sqrt(px_0 *px_1 ))
+    
+    Px_c0 = p0_x * Px / Pc0
+    Px_c1 = p1_x * Px / Pc1
+
+
+    BC = np.sum(np.sqrt(Px_c0 * Px_c1))
+
+    return BC
+
+
+
 
 def __knn_density_calc(distances_matrix, k, p, n): # p is the dimension 
     vec = np.zeros(len(distances_matrix))
@@ -51,38 +79,10 @@ def __knn_density_calc(distances_matrix, k, p, n): # p is the dimension
 
 def __calculate_volume(d, radius):
     return ((np.pi)**(d/2) ) / math.gamma((d/2) + 1) * (radius**d)
-    
-def __calc_tight_bounds_via_knn_density(density0, density1, alpha):    
-    # fx = 0.5 * (density0 + density1)
-
-    px = density1 / (density0 + density1)
-    
-    n = len(density0) + len(density1) 
-    
-    glx = np.mean( g_L(px, alpha)    )
-    gux = np.mean( g_U(px, alpha, g_L, g_C)  )
-    
-    return glx, gux
 
 
-# these functions are only used in __calc_tight_bounds_via_knn_density
-def g_L(p, alpha):
-    return 1/alpha * np.log(np.cosh(alpha/2) / np.cosh(alpha * (p - 1/2)))
-#     return 1/alpha * np.log((1 + np.exp(-alpha)) / (np.exp(-alpha * p) + np.exp(-alpha * (1 - p))))
 
-def g_C(p):
-    return ( 1/2 * np.sin( np.pi * p ) )
-
-def g_U(p, alpha,  g_L, g_C):
-    return g_L(p, alpha) + (1 - 2 * g_L(0.5, alpha)) * g_C(p)
-
-
-def __multiplier(n):
-    num = n * (n + 2)**2 * math.gamma((n + 2) / 2)**(-4 / n) * ((n - 2) / n)**(2 + n / 2)
-    denom = n**2 - 6 * n + 16
-    return (num / denom)**(n / (n + 4))
-
-
+### used as a default /keyword parameter 
 def knn_num_calc(N, n):# N is size of set and n is dimension
     mult = __multiplier(n)
     N_exp = N**(4/ (n+4))
@@ -90,3 +90,9 @@ def knn_num_calc(N, n):# N is size of set and n is dimension
     if n <=2:
         print("This function doesn't work for dimension <3")
     return val
+
+
+def __multiplier(n):
+    num = n * (n + 2)**2 * math.gamma((n + 2) / 2)**(-4 / n) * ((n - 2) / n)**(2 + n / 2)
+    denom = n**2 - 6 * n + 16
+    return (num / denom)**(n / (n + 4))
