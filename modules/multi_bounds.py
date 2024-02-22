@@ -15,7 +15,7 @@ accepted_bound_types =  ["dp","tight", "Bhattacharyya"]
 
 class bounds_class:
 
-    def __init__(self, distr_type, params0, params1, MC_num=500, threads =0, bound_types = ["dp","tight", "Bhattacharyya"], dp_handle_errors ="worst", Bha_handle_errors= "worst", tight_params =[50, 10] ):
+    def __init__(self, distr_type, params0, params1, MC_num=500, threads =0, bound_types = ["dp","tight", "Bhattacharyya"], dp_handle_errors ="worst", Bha_handle_errors= "worst", tight_params =[50, 0] ):
         self.__distr_type = distr_type
         self.__params0 = params0
         self.__params1 = params1

@@ -7,7 +7,9 @@ from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import math
 
-def get_tight_bounds_knn(data0, data1, alpha=50, k=10):
+def get_tight_bounds_knn(data0, data1, alpha=50, k=0):
+    if k == 0:
+        k = knn_num_calc(len(data0), len(data1[0]))
 
     X = np.concatenate([data0, data1])# merge two class data sets to get our X space
 
@@ -83,10 +85,10 @@ def __multiplier(n):
     return (num / denom)**(n / (n + 4))
 
 
-def knn_num_calc(N, n):# N is size of set and n is dimension
-    mult = __multiplier(n)
-    N_exp = N**(4/ (n+4))
+def knn_num_calc(N, d):# N is size of set and d is dimension
+    mult = __multiplier(d)
+    N_exp = N**(4/ (d+4))
     val=  int( mult * N_exp)
-    if n <=2:
+    if d <=2:
         print("This function doesn't work for dimension <3")
     return val

@@ -57,8 +57,8 @@ def __Bhattacharyya_coef_via_knn(data0, data1, k) :
 
     # BC = np.sum(np.sqrt(px_0 *px_1 ))
     
-    Px_c0 = p0_x * Px / Pc0
-    Px_c1 = p1_x * Px / Pc1
+    Px_c0 = p0_x * Px / Pc0 #P(x |c_0)
+    Px_c1 = p1_x * Px / Pc1 #P(x |c_1)
 
 
     BC = np.sum(np.sqrt(Px_c0 * Px_c1))
@@ -83,11 +83,11 @@ def __calculate_volume(d, radius):
 
 
 ### used as a default /keyword parameter 
-def knn_num_calc(N, n):# N is size of set and n is dimension
-    mult = __multiplier(n)
-    N_exp = N**(4/ (n+4))
+def knn_num_calc(N, d):# N is size of set and d is dimension
+    mult = __multiplier(d)
+    N_exp = N**(4/ (d+4))
     val=  int( mult * N_exp)
-    if n <=2:
+    if d <=2:
         print("This function doesn't work for dimension <3")
     return val
 
