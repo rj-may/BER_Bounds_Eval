@@ -54,15 +54,18 @@ def __knn_density_calc(distances_matrix, k, p, n): # p is the dimension
 def __calculate_volume(d, radius):
     return ((np.pi)**(d/2) ) / math.gamma((d/2) + 1) * (radius**d)
     
-def __calc_tight_bounds_via_knn_density(density0, density1, alpha):    
-    # fx = 0.5 * (density0 + density1)
+def __calc_tight_bounds_via_knn_density(density0, density1, alpha): 
+    d1 = density1/ sum(density1)
+    d0 = density0 /sum(density0)
 
-    px = density1 / (density0 + density1)
+    fx = 0.5 * (d0 + d1)
+
+    px = d1 / (d0 + d1)
     
-    n = len(density0) + len(density1) 
+    # n = len(density0) + len(density1) 
     
-    glx = np.mean( g_L(px, alpha)    )
-    gux = np.mean( g_U(px, alpha, g_L, g_C)  )
+    glx = np.sum( g_L(px, alpha)  * fx  )
+    gux = np.sum( g_U(px, alpha, g_L, g_C) *fx )
     
     return glx, gux
 

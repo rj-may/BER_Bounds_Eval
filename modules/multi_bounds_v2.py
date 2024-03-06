@@ -46,16 +46,51 @@ class bounds_class:
         self.__upper_bounds_tight = []
         self.__upper_bounds_Maha = []
         
-      
         self.__parallel_simulation(self.__MC_num, self.__threads) #wild fun 
 
     def __len__(self):
         return self.__MC_num
 
     def __call__(self):
-        values_dict = {"Dp": np.mean(self.get_bounds_dp(), axis = 1), "Bha": np.mean(self.get_bounds_Bha(), axis = 1),
-                        "Bha_knn": np.mean(self.get_bounds_Bha_knn(), axis =1), "tight": np.mean(self.get_bounds_tight(), axis =1),
-                        "Maha": np.mean(self.get_upper_Maha()) }
+        dp_bounds_l, dp_bounds_u =   np.mean(self.get_bounds_dp(), axis = 1)
+        bha_bounds_l, bha_bounds_u = np.mean(self.get_bounds_Bha(), axis = 1)
+        bha_knn_bounds_l, bha_knn_bounds_u =  np.mean(self.get_bounds_Bha_knn(), axis =1)
+        tight_bounds_l, tight_bounds_u  =  np.mean(self.get_bounds_tight(), axis =1)
+
+        values_dict = {
+            "Dp_lower": dp_bounds_l,
+            "Dp_upper": dp_bounds_u,
+            "Bha_lower": bha_bounds_l,
+            "Bha_upper": bha_bounds_u,
+            "Bha_knn_lower": bha_knn_bounds_l,
+            "Bha_knn_upper": bha_knn_bounds_u, 
+            "tight_lower": tight_bounds_l,
+            "tight_upper": tight_bounds_u,
+            "Maha_upper": np.mean(self.get_upper_Maha())
+            }
+
+        return values_dict
+
+    def validity(self, BER):
+        true = np.ones(self.__MC_num)* BER
+        dp_bounds_l, dp_bounds_u =   self.get_bounds_dp()
+        bha_bounds_l, bha_bounds_u = self.get_bounds_Bha()
+        bha_knn_bounds_l, bha_knn_bounds_u =  self.get_bounds_Bha_knn()
+        tight_bounds_l, tight_bounds_u  =  self.get_bounds_tight()
+        Maha_upper = self.get_upper_Maha()        
+
+        values_dict = {
+            "Dp_lower":  np.sum((true - dp_bounds_l)>0) / self.__MC_num ,
+            "Dp_upper": np.sum((dp_bounds_u - true)>0) / self.__MC_num,
+            "Bha_lower":  np.sum((true - bha_bounds_l)>0) / self.__MC_num ,
+            "Bha_upper":  np.sum((bha_bounds_u - true)>0) / self.__MC_num,
+            "Bha_knn_lower":  np.sum((true - bha_knn_bounds_l)>0) / self.__MC_num ,
+            "Bha_knn_upper":  np.sum((bha_knn_bounds_u - true)>0) / self.__MC_num, 
+            "tight_lower":  np.sum((true - tight_bounds_l)>0) / self.__MC_num ,
+            "tight_upper":  np.sum((tight_bounds_u - true)>0) / self.__MC_num,
+            "Maha_upper":  np.sum((Maha_upper - true)>0) / self.__MC_num
+            }
+
         return values_dict
 
 
