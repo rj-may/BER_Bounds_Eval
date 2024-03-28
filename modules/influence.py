@@ -1,9 +1,54 @@
+
+"""
+This code estimates the hellinger divergence from influence functions. 
+
+
+Disclaimer:
+This Python file is based on code from a library that is not my own. It is distributed under the GNU General Public License.
+I converted with ChatGPT and some trial and error.  I only converted the necessary pieces to get the Hellinger divergence.
+
+The paper this is based on should be cited as follows:
+"Influence Functions for Machine Learning: Nonparametric Estimators for Entropies, Divergences, and Mutual Informations",
+by Kirthevasan Kandasamy, Akshay Krishnamurthy, Barnabas Poczos, Larry Wasserman, James Robins.
+
+Their git repo is here: https://github.com/kirthevasank/if-estimators 
+
+"""
+
 import numpy as np
 # from scipy.stats import gaussian_kde
 
 from modules.influence_params import parse_two_distro_params
 from modules.influence_getTwoDistroInfFunAvgs import get_two_distro_inf_fun_avgs
 
+def get_influence_bounds(data0, data1, assume_even = False, handle_errors = "worst" ):
+
+    estim, bwX, bwY = hellinger_divergence(data0, data1)
+    BC = 1 - estim ### note that the Bhattacharyyya coefficient is 1- H^2
+
+    if assume_even or  len(data0)== len(data1):
+        upper = 1/2 * BC 
+        lower = 1/2 - 1/2 * np.sqrt(1- BC**2)
+    else:
+        total = len(data0) + len(data1)
+        P_c0 = len(data0) / total
+        P_c1 = len(data1)/ total
+
+        upper =    BC * np.sqrt(P_c0 *P_c1  )
+        if BC > 1:
+            if handle_errors == "worst": #thoeretical worst value for each 
+                lower, upper = .5, .5
+            elif handle_errors == "lower":
+                lower =.5 
+        else:
+            lower = 1/2  - 1/2 * np.sqrt( 1- 4 *P_c0 *P_c1 *   (BC * BC))
+   
+    return lower, upper 
+
+
+
+
+### This is the main funciton call to get the Hellinger distance SQUARED
 
 def hellinger_divergence(X, Y, functional_params=None, params=None):
     if functional_params is None:

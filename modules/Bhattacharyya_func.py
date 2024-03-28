@@ -2,12 +2,31 @@ import numpy as np
 from numpy.linalg import inv
 from numpy.linalg import det
 
-### this is the function to use
-# it accepts parameters based on the calculated distributions
+
+'''
+There are two very valid functions to use. 
+
+This function calls the function below. You only have to pass in the data. 
+'''
+
+def get_Bhattacharyya_bounds(data0, data1, assume_even = False, handle_errors = "worst" ):
+
+    params0  = __obs_params(data0)
+    params1 = __obs_params(data1)
+    if assume_even:
+        P_c0 , P_c1 = .5, .5
+    else:
+        total = len(data0) + len(data1)
+        P_c0 = len(data0) / total
+        P_c1 = len(data1)/ total
+
+    return Bhattacharyya_bounds(params0, params1, class_prob=[P_c0, P_c1], handle_errors = handle_errors)
+
+
+'''
+This function accepts parameters based on the calculated distributions
 #class probability assumes distributions of equal class sizes
-
-
-### This really only works for class that 
+'''
 
 def Bhattacharyya_bounds(params0, params1, class_prob = [1/2, 1/2], handle_errors = "worst"):
 
@@ -36,6 +55,10 @@ def Bhattacharyya_bounds(params0, params1, class_prob = [1/2, 1/2], handle_error
 
     return lower, upper 
 
+def __obs_params( data):
+    mean = np.mean(data, axis=0)# this getting it by the column I believe this should work for [[x y z] [x y z ]] data
+    covar = np.cov(data, rowvar= False)
+    return [mean, covar]
 
 
 # this function calculates the distance between two Distributions with the Bhattacharyya distance
@@ -60,7 +83,20 @@ def __Bhattacharyya_dist(params0, params1, class_prob = [0.5, 0.5],  numpycheck 
 
     return dist
 
+## take data
+def get_Maha_upper(data0, data1, assume_even = False):
+    params0  = __obs_params(data0)
+    params1 = __obs_params(data1)
+    if assume_even:
+        P_c0 , P_c1 = .5, .5
+    else:
+        total = len(data0) + len(data1)
+        P_c0 = len(data0) / total
+        P_c1 = len(data1)/ total
+    class_prob = [P_c0, P_c1]
+    return Mahalanobis_upper(params0= params0, params1=params1, class_prob=class_prob )
 
+## take parameters 
 def Mahalanobis_upper( params0, params1, class_prob = [.5, .5]):
     mu0 = params0[0]
     covar0 = params0[1]

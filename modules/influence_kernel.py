@@ -1,5 +1,18 @@
-import numpy as np
+"""
+This is a sub-file of the influence code 
 
+Disclaimer:
+This Python file is based on code from a library that is not my own. It is distributed under the GNU General Public License.
+
+The paper this is based on should be cited as follows:
+"Influence Functions for Machine Learning: Nonparametric Estimators for Entropies, Divergences, and Mutual Informations",
+by Kirthevasan Kandasamy, Akshay Krishnamurthy, Barnabas Poczos, Larry Wasserman, James Robins.
+
+Their git repo is here: https://github.com/kirthevasank/if-estimators 
+
+"""
+
+import numpy as np
 
 def kde_gauss_kernel(X, Y, h):
     # Returns the Kernel Matrix for a Gaussian Kernel of bandwidth h.
