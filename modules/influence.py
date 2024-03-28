@@ -24,7 +24,7 @@ from modules.influence_getTwoDistroInfFunAvgs import get_two_distro_inf_fun_avgs
 def get_influence_bounds(data0, data1, assume_even = False, handle_errors = "worst" ):
 
     estim, bwX, bwY = hellinger_divergence(data0, data1)
-    BC = 1 - estim ### note that the Bhattacharyyya coefficient is 1- H^2
+    BC = 1 - estim   ### note that the Bhattacharyyya coefficient is 1- H^2
 
     if assume_even or  len(data0)== len(data1):
         upper = 1/2 * BC 
