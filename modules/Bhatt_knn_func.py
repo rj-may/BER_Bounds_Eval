@@ -37,13 +37,13 @@ def __Bhattacharyya_coef_via_knn(data0, data1, k) :
     n1 = len(data1)
 
     # Fit k-Nearest Neighbors model and get densitities for data set 1
-    knn = NearestNeighbors(n_neighbors=k, algorithm = 'brute')
+    knn = NearestNeighbors(n_neighbors=k, algorithm = 'auto')
     knn.fit(data0)
     distances, indices = knn.kneighbors(X) # get distance to the  1,2,... kth nearest neighbor across the space x
     density0 = __knn_density_calc(distances, k, p, n0) ## calculate density based off the distances, k, dim, and sample size
 
     # Fit k-Nearest Neighbors model and get densitities for data set 2
-    knn = NearestNeighbors(n_neighbors=k, algorithm= 'brute')
+    knn = NearestNeighbors(n_neighbors=k, algorithm= 'auto')
     knn.fit(data1)
     distances, indices = knn.kneighbors(X)    
     density1 = __knn_density_calc(distances, k, p, n1)

@@ -323,8 +323,10 @@ end
 div_est=w'*temp_kern;
 if ~quiet
     disp 'Ensemble estimation complete'
+    
 end
-
+if ~quiet
 if div_est<0
     fprintf( 'Warning! Ensemble estimator returned a value less than zero. \nThis may not be appropriate for the chosen divergence functional. \nConsider changing the bandwidth range and rerunning. \n')
+end
 end
