@@ -100,19 +100,19 @@ class bounds_class:
         Maha_upper = self.get_upper_Maha()        
 
         values_dict = {
-            "Dp_lower":  np.sum((true - dp_bounds_l)>0) / self.__MC_num ,
-            "Dp_upper": np.sum((dp_bounds_u - true)>0) / self.__MC_num,
-            "Bha_lower":  np.sum((true - bha_bounds_l)>0) / self.__MC_num ,
-            "Bha_upper":  np.sum((bha_bounds_u - true)>0) / self.__MC_num,
-            "Bha_knn_lower":  np.sum((true - bha_knn_bounds_l)>0) / self.__MC_num ,
-            "Bha_knn_upper":  np.sum((bha_knn_bounds_u - true)>0) / self.__MC_num, 
-            "tight_lower":  np.sum((true - tight_bounds_l)>0) / self.__MC_num ,
-            "tight_upper":  np.sum((tight_bounds_u - true)>0) / self.__MC_num,
-            "Maha_upper":  np.sum((Maha_upper - true)>0) / self.__MC_num ,
-            "inf_lower": np.sum((true - inf_l )>0) / self.__MC_num ,
-            "inf_upper": np.sum((inf_u - true)>0) / self.__MC_num,
-            "enDive_lower": np.sum((true - enDive_l )>0) / self.__MC_num,
-            "enDive_upper": np.sum((enDive_u - true)>0) / self.__MC_num,
+            "Dp_lower":  np.sum((true - dp_bounds_l)>0) / self.__MC_num if dp_bounds_l else np.nan,
+            "Dp_upper": np.sum((dp_bounds_u - true)>0) / self.__MC_num if dp_bounds_u else np.nan,
+            "Bha_lower":  np.sum((true - bha_bounds_l)>0) / self.__MC_num if bha_bounds_l else np.nan ,
+            "Bha_upper":  np.sum((bha_bounds_u - true)>0) / self.__MC_num if bha_bounds_u else np.nan,
+            "Bha_knn_lower":  np.sum((true - bha_knn_bounds_l)>0) / self.__MC_num if bha_knn_bounds_l else np.nan,
+            "Bha_knn_upper":  np.sum((bha_knn_bounds_u - true)>0) / self.__MC_num if bha_knn_bounds_u else np.nan, 
+            "tight_lower":  np.sum((true - tight_bounds_l)>0) / self.__MC_num  if tight_bounds_l else np.nan,
+            "tight_upper":  np.sum((tight_bounds_u - true)>0) / self.__MC_num if tight_bounds_u else np.nan,
+            "Maha_upper":  np.sum((Maha_upper - true)>0) / self.__MC_num if Maha_upper else np.nan ,
+            "inf_lower": np.sum((true - inf_l )>0) / self.__MC_num  if inf_l else np.nan,
+            "inf_upper": np.sum((inf_u - true)>0) / self.__MC_num if inf_u else np.nan,
+            "enDive_lower": np.sum((true - enDive_l )>0) / self.__MC_num if enDive_l else np.nan,
+            "enDive_upper": np.sum((enDive_u - true)>0) / self.__MC_num if enDive_u else np.nan,
             }
 
         return values_dict
