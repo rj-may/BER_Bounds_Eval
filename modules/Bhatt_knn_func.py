@@ -1,3 +1,8 @@
+''' only run this if you have sklearnex downloaded'''
+# import sklearnex
+# from sklearnex import patch_sklearn
+# patch_sklearn()
+
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import math

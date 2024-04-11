@@ -1,4 +1,11 @@
 import numpy as np
+
+''' only run this if you have sklearnex downloaded'''
+# import sklearnex
+# from sklearnex import patch_sklearn
+# patch_sklearn()
+''' this is for optimization '''
+
 from scipy.spatial import distance
 from scipy.sparse.csgraph import minimum_spanning_tree
 import math

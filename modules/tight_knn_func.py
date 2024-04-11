@@ -3,6 +3,13 @@ this function uses the logic of  Arbitrarily Tight Upper and Lower Bounds  on th
 and a knn_density calculator for the distributions
 
  '''
+
+''' only run this if you have sklearnex downloaded'''
+# import sklearnex
+# from sklearnex import patch_sklearn
+# patch_sklearn()
+''' this is for optimization '''
+
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import math
