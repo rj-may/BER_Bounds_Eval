@@ -213,7 +213,7 @@ class bounds_class:
                 upper_bounds_Maha.append(a)
 
             if "influence" in self.__get_bound_types():
-                estim = eng.hellingerDivergence(data0, data1,[], [])
+                estim = eng.hellingerDivergence(data0, data1,[], [],  nargout= 1)
                 BC = 1 - estim
                 up = 1/2 * BC 
                 low = 1/2 - 1/2 * np.sqrt(1- BC**2)
@@ -222,8 +222,10 @@ class bounds_class:
                 upper_bounds_inf.append(up)
             
             if "enDive" in self.__get_bound_types():
-                Dp = eng.EnDive(data0, data1, 'type', "DP",'quiet')
-                
+                Dp = eng.EnDive(data0, data1, 'type', "DP",'quiet', 'kernel', 'uniform','est', 1,   nargout= 1)
+                if Dp > 1: ### this is kind of ghetto to do 
+                    Dp = 1
+                    
                 if Dp > 0:
                     u = 1/2 -1/2 *Dp
                     l = 1/2 - 1/2 * np.sqrt(Dp)

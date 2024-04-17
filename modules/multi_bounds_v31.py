@@ -13,10 +13,8 @@ import matlab.engine
 
 import numpy as np
 import math
-import concurrent.futures  # Add this line to import the concurrent module
+# import concurrent.futures  # Add this line to import the concurrent module
 
-
-### this only accepts multivariate normal data
 accepted_distr = ["mv_normal"]
 
 accepted_bound_types =  ["dp","tight", "Bhattacharyya", "Bhatt_knn", "Mahalanobis", "influence", "enDive"]
@@ -25,12 +23,15 @@ error_dict ={"dp_handle_errors" :"worst", "Bha_handle_errors": "worst", "Bha_knn
 
 class bounds_class:
 
-    def __init__(self, distr_type, params0, params1, MC_num=500, threads =2, bound_types = accepted_bound_types, error_dict = error_dict, alpha_tight =50 , k_nn =0 ):
-        self.__distr_type = distr_type
-        self.__params0 = params0
-        self.__params1 = params1
+    def __init__(self, data_generator,  sample_size = 500, MC_num=500, engine=None, bound_types = accepted_bound_types, error_dict = error_dict, alpha_tight =50 , k_nn =0 ):
+        self.__data_generator = data_generator
         self.__MC_num = MC_num
-        self.__threads= threads
+        self.__sample_size = sample_size
+        # self.__threads= threads
+        if engine == None:
+            self.__eng = matlab.engine.start_matlab(background =True)
+        else:
+            self.__eng = engine
         self.__bound_types= bound_types
         self.__dp_handle_errors = error_dict["dp_handle_errors"]
         self.__Bha_handle_errrors = error_dict["Bha_handle_errors"]
@@ -39,8 +40,7 @@ class bounds_class:
         self.__tight_bounds_alpha = alpha_tight # for the aribitrarilty tight bound density type. 
         self.__tight_bounds_knn_num =  k_nn
 
-        if self.__distr_type not in accepted_distr:
-            print("Not a programmed distribution~sincerely multi bound class " )
+
 
         for i in self.__bound_types:
             if i not in accepted_bound_types:
@@ -60,7 +60,7 @@ class bounds_class:
         self.__lower_bounds_enDive = []
         self.__upper_bounds_enDive = []
 
-        self.__parallel_simulation(self.__MC_num, self.__threads) #wild fun 
+        self.__simulation(self.__MC_num) 
 
     def __len__(self):
         return self.__MC_num
@@ -174,18 +174,11 @@ class bounds_class:
 
 
     ##this code is written so there is no issues with multiple functions accessing the same list in __parallel_simulation
-    def __simulate_for_parallel(self, MC_iter):
+    def __loop_simutlation(self, MC_iter):
         MC_iter = MC_iter
 
         
-        eng = matlab.engine.start_matlab()
-        eng.cd(r'modules', nargout=0)
-
-
-        if self.__get_distr_type() == "mv_normal":    
-            # params should be (mean1, covariance1, n0) where means is  1 x n list and covar is n x n
-            mean0, covariance0, n0 = self.__params0
-            mean1, covariance1, n1 = self.__params1
+        eng = self.__eng
         
         lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha = [], [], [], [], [], []
         lower_bounds_Bha_knn , upper_bounds_Bha_knn, upper_bounds_Maha = [], [], []
@@ -193,11 +186,8 @@ class bounds_class:
         
         for i in range(MC_iter):
             
-            data0 =  np.random.multivariate_normal(mean0, covariance0, n0)
-            data1 =  np.random.multivariate_normal(mean1, covariance1, n1)
-            
-            # sim_params0 = self.__obs_params(data0)
-            # sim_params1 = self.__obs_params(data1)
+            data0,data1 = self.__data_generator.sample(self.__sample_size)
+
             if "dp" in self.__get_bound_types():
                 dp_l, dp_u = calc_bounds_dp(data0, data1, handle_errors = self.get_handle_errors_dp())
                 lower_bounds_dp.append(dp_l)
@@ -221,9 +211,12 @@ class bounds_class:
             if "Mahalanobis" in  self.__get_bound_types():
                 a =calc_Mahalanobis_upper(data0, data1)
                 upper_bounds_Maha.append(a)
-
+        # eng = eng.result()
+        # eng.cd(r'modules', nargout=0)
+        # for i in range(MC_iter):
+            
             if "influence" in self.__get_bound_types():
-                estim = eng.hellingerDivergence(data0, data1,[], [],  nargout= 1)
+                estim = eng.hellingerDivergence(data0, data1,[], [], nargout=1, )
                 BC = 1 - estim
                 up = 1/2 * BC 
                 low = 1/2 - 1/2 * np.sqrt(1- BC**2)
@@ -232,7 +225,7 @@ class bounds_class:
                 upper_bounds_inf.append(up)
             
             if "enDive" in self.__get_bound_types():
-                Dp = eng.EnDive(data0, data1, 'type', "DP",'quiet', 'kernel', 'uniform',  nargout= 1)
+                Dp = eng.EnDive(data0, data1, 'type', "DP",'quiet', nargout= 1)
                 
                 if Dp > 0:
                     u = 1/2 -1/2 *Dp
@@ -242,30 +235,24 @@ class bounds_class:
                 lower_bounds_enDive.append(l)
                 upper_bounds_enDive.append(u)
 
+             
 
-        eng.quit()
+        # eng.quit()
         return lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha, lower_bounds_Bha_knn, upper_bounds_Bha_knn, upper_bounds_Maha, lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive
 
 
-    def __parallel_simulation(self, MC_iter, num_threads):
-        MC_iter_per_thread = MC_iter // num_threads
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-            futures = [executor.submit(self.__simulate_for_parallel, MC_iter_per_thread) for _ in range(num_threads)]
-
-            for future in concurrent.futures.as_completed(futures):
-                # print(future.result())
-                lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha, lower_bounds_Bha_knn, upper_bounds_Bha_knn, upper_bounds_Maha,  lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive    = future.result()
-                self.__lower_bounds_dp.extend(lower_bounds_dp)
-                self.__upper_bounds_dp.extend(upper_bounds_dp)
-                self.__lower_bounds_tight.extend(lower_bounds_tight)
-                self.__upper_bounds_tight.extend(upper_bounds_tight)
-                self.__lower_bounds_Bha.extend(lower_bounds_Bha)
-                self.__upper_bounds_Bha.extend(upper_bounds_Bha)
-                self.__lower_bounds_Bha_knn.extend(lower_bounds_Bha_knn)
-                self.__upper_bounds_Bha_knn.extend(upper_bounds_Bha_knn)
-                self.__upper_bounds_Maha.extend(upper_bounds_Maha)
-                self.__lower_bounds_inf.extend(lower_bounds_inf)
-                self.__upper_bounds_inf.extend(upper_bounds_inf)
-                self.__lower_bounds_enDive.extend(lower_bounds_enDive)
-                self.__upper_bounds_enDive.extend(upper_bounds_enDive)
+    def __simulation(self, MC_iter):
+        lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha, lower_bounds_Bha_knn, upper_bounds_Bha_knn, upper_bounds_Maha,  lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive  = self.__loop_simutlation(MC_iter)
+        self.__lower_bounds_dp.extend(lower_bounds_dp)
+        self.__upper_bounds_dp.extend(upper_bounds_dp)
+        self.__lower_bounds_tight.extend(lower_bounds_tight)
+        self.__upper_bounds_tight.extend(upper_bounds_tight)
+        self.__lower_bounds_Bha.extend(lower_bounds_Bha)
+        self.__upper_bounds_Bha.extend(upper_bounds_Bha)
+        self.__lower_bounds_Bha_knn.extend(lower_bounds_Bha_knn)
+        self.__upper_bounds_Bha_knn.extend(upper_bounds_Bha_knn)
+        self.__upper_bounds_Maha.extend(upper_bounds_Maha)
+        self.__lower_bounds_inf.extend(lower_bounds_inf)
+        self.__upper_bounds_inf.extend(upper_bounds_inf)
+        self.__lower_bounds_enDive.extend(lower_bounds_enDive)
+        self.__upper_bounds_enDive.extend(upper_bounds_enDive)      
