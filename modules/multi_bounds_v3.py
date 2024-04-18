@@ -222,7 +222,7 @@ class bounds_class:
                 upper_bounds_inf.append(up)
             
             if "enDive" in self.__get_bound_types():
-                Dp = eng.EnDive(data0, data1, 'type', "DP",'quiet', 'kernel', 'uniform','est', 1,   nargout= 1)
+                Dp = eng.EnDive(data0, data1, 'type', "DP",'quiet', 'kernel', 'uniform','est', 1, nargout= 1)
                 if Dp > 1: ### this is kind of ghetto to do 
                     Dp = 1
                     
