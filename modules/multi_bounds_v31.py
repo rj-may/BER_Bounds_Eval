@@ -13,7 +13,9 @@ import matlab.engine
 
 import numpy as np
 import math
-# import concurrent.futures  # Add this line to import the concurrent module
+from sklearnex import patch_sklearn
+patch_sklearn()
+
 
 accepted_distr = ["mv_normal"]
 
