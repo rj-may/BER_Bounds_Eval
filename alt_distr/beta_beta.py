@@ -76,7 +76,7 @@ for i in sample_sizes:
     
     print("done with ", i, " in ",  end -start )
 
-file_path = 'sim_data/inc_n_3d.pkl'
+file_path = 'sim_data/beta_beta.pkl'
 
 with open(file_path, 'rb') as file:
         # Use pickle.load to deserialize and load the list of objects from the file
