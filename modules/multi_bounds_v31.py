@@ -16,7 +16,6 @@ import math
 from sklearnex import patch_sklearn
 patch_sklearn()
 
-
 accepted_distr = ["mv_normal"]
 
 accepted_bound_types =  ["dp","tight", "Bhattacharyya", "Bhatt_knn", "Mahalanobis", "influence", "enDive"]
