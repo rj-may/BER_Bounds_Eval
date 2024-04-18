@@ -13,8 +13,6 @@ import matlab.engine
 
 import numpy as np
 import math
-from sklearnex import patch_sklearn
-patch_sklearn()
 
 accepted_distr = ["mv_normal"]
 
@@ -30,7 +28,7 @@ class bounds_class:
         self.__sample_size = sample_size
         # self.__threads= threads
         if engine == None:
-            self.__eng = matlab.engine.start_matlab(background =True)
+            self.__eng = matlab.engine.start_matlab()
         else:
             self.__eng = engine
         self.__bound_types= bound_types
