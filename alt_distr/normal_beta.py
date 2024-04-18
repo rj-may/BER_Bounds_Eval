@@ -45,8 +45,6 @@ func1 = np.random.beta
 params0= {"loc":0, "scale" : 1}
 params1 = {'a': 20, 'b':20}
 
-
-
 generator = data_gen(func0, func1,  params0, params1, dimension)
 bound_types =  ["dp", "Bhattacharyya", "Bhatt_knn",  "influence", "enDive"]
 
@@ -77,11 +75,10 @@ for i in sample_sizes:
     print("done with ", i, " in ",  end -start )
 
 file_path = 'sim_data/normal_beta.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
+objects_to_save = bound_obj_lst
 
-with open(file_path, 'rb') as file:
-        # Use pickle.load to deserialize and load the list of objects from the file
-        loaded_objects = pickle.load(file)
-
-print('Loaded object successfully')
+with open(file_path, 'wb') as file:
+        # Use pickle.dump to serialize and write the list of objects to the file
+        pickle.dump(objects_to_save, file)
+print(f'Objects saved to {file_path}')
     
-bound_obj_lst, bound_obj_lst2 = loaded_objects

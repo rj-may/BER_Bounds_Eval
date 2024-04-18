@@ -78,10 +78,9 @@ for i in sample_sizes:
 
 file_path = 'sim_data/beta_beta.pkl'
 
-with open(file_path, 'rb') as file:
-        # Use pickle.load to deserialize and load the list of objects from the file
-        loaded_objects = pickle.load(file)
+objects_to_save = bound_obj_lst
 
-print('Loaded object successfully')
-    
-bound_obj_lst, bound_obj_lst2 = loaded_objects
+with open(file_path, 'wb') as file:
+        # Use pickle.dump to serialize and write the list of objects to the file
+        pickle.dump(objects_to_save, file)
+print(f'Objects saved to {file_path}')
