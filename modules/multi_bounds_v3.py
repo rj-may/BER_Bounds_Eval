@@ -95,7 +95,7 @@ class bounds_class:
         tight_bounds_l, tight_bounds_u  =  self.get_bounds_tight()
         inf_l, inf_u = self.get_inf_bounds()
         enDive_l, enDive_u = self.get_Bounds_enDive()
-        Maha_upper = self.get_upper_Maha()        
+        Maha_upper = self.get_upper_Maha()
 
         values_dict = {
             "Dp_lower":  np.sum((true - dp_bounds_l)>0) / self.__MC_num if dp_bounds_l else np.nan,
@@ -111,6 +111,12 @@ class bounds_class:
             "inf_upper": np.sum((inf_u - true)>0) / self.__MC_num if inf_u else np.nan,
             "enDive_lower": np.sum((true - enDive_l )>0) / self.__MC_num if enDive_l else np.nan,
             "enDive_upper": np.sum((enDive_u - true)>0) / self.__MC_num if enDive_u else np.nan,
+            "Dp": np.sum(np.logical_and((true - dp_bounds_l) > 0, (dp_bounds_u - true) > 0)) / self.__MC_num if dp_bounds_l else np.nan,
+            "Bha":  np.sum(np.logical_and((true - bha_bounds_l) > 0, (bha_bounds_u - true) > 0)) / self.__MC_num if bha_bounds_l else np.nan,
+            "Bha_knn": np.sum(np.logical_and((true - bha_knn_bounds_l) > 0, (bha_knn_bounds_u - true) > 0)) / self.__MC_num if bha_knn_bounds_l else np.nan,
+            "tight": np.sum(np.logical_and((true - tight_bounds_l) > 0, (tight_bounds_u - true) > 0)) / self.__MC_num if tight_bounds_l else np.nan,
+            "inf": np.sum(np.logical_and((true - inf_l) > 0, (inf_u - true) > 0)) / self.__MC_num if inf_l else np.nan,
+            "enDive": np.sum(np.logical_and((true - enDive_l) > 0, (enDive_u - true) > 0)) / self.__MC_num if enDive_l else np.nan
             }
 
         return values_dict
