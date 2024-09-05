@@ -34,7 +34,7 @@ from modules.data_gen import data_gen
 sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
 
 
-dimension =  8
+dimension =  15
 
 MC_num = 400
 
@@ -74,7 +74,7 @@ for i in sample_sizes:
     
     print("done with ", i, " in ",  end -start )
 
-file_path = 'sim_data/normal_beta8.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
+file_path = 'sim_data/normal_beta15.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
 objects_to_save = bound_obj_lst
 
 with open(file_path, 'wb') as file:

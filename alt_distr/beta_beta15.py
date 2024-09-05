@@ -34,16 +34,18 @@ from modules.data_gen import data_gen
 sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
 
 
-dimension =  8
+dimension =  15
 
 MC_num = 400
 
 bound_obj_lst = []
 
-func0 = np.random.normal
+func0 = np.random.beta
 func1 = np.random.beta
-params0= {"loc":0, "scale" : 1}
-params1 = {'a': 20, 'b':20}
+
+params0= {'a':2, 'b':5}
+params1 = {'a': 5, 'b':2}
+
 
 generator = data_gen(func0, func1,  params0, params1, dimension)
 bound_types =  ["dp", "Bhattacharyya", "Bhatt_knn",  "influence", "enDive"]
@@ -74,11 +76,11 @@ for i in sample_sizes:
     
     print("done with ", i, " in ",  end -start )
 
-file_path = 'sim_data/normal_beta8.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
+file_path = 'sim_data/beta_beta15.pkl'
+
 objects_to_save = bound_obj_lst
 
 with open(file_path, 'wb') as file:
         # Use pickle.dump to serialize and write the list of objects to the file
         pickle.dump(objects_to_save, file)
 print(f'Objects saved to {file_path}')
-    
