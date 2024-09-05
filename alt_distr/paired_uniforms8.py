@@ -40,10 +40,11 @@ MC_num = 400
 
 bound_obj_lst = []
 
-func0 = np.random.normal
-func1 = np.random.beta
-params0= {"loc":0, "scale" : 1}
-params1 = {'a': 20, 'b':20}
+func0 = np.random.uniform
+func1 = np.random.uniform
+
+params0 = {'low': 0, 'high':1}
+params1= {"low":.8, "high" : 1.8}
 
 generator = data_gen(func0, func1,  params0, params1, dimension)
 bound_types =  ["dp", "Bhattacharyya", "Bhatt_knn",  "influence", "enDive"]
@@ -74,7 +75,8 @@ for i in sample_sizes:
     
     print("done with ", i, " in ",  end -start )
 
-file_path = 'sim_data/normal_beta.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
+
+file_path = 'sim_data/paired_uniforms_8.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
 objects_to_save = bound_obj_lst
 
 with open(file_path, 'wb') as file:

@@ -76,7 +76,7 @@ for i in sample_sizes:
     
     print("done with ", i, " in ",  end -start )
 
-file_path = 'sim_data/beta_beta.pkl'
+file_path = 'sim_data/beta_beta_8.pkl'
 
 objects_to_save = bound_obj_lst
 
