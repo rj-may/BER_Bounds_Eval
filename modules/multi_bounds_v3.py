@@ -23,7 +23,7 @@ error_dict ={"dp_handle_errors" :"worst", "Bha_handle_errors": "worst", "Bha_knn
 
 class bounds_class:
 
-    def __init__(self, data_generator,  sample_size = 500, MC_num=500, threads =2, bound_types = accepted_bound_types, error_dict = error_dict, alpha_tight =50 , k_nn =0 ):
+    def __init__(self, data_generator,  sample_size = 500, MC_num=500, threads =2, bound_types = accepted_bound_types, error_dict = error_dict, alpha_tight =50,  k_nn =0,kernel= 'uniform' ):
         self.__data_generator = data_generator
         self.__MC_num = MC_num
         self.__sample_size = sample_size
@@ -35,6 +35,7 @@ class bounds_class:
         self.__influence_handle_errors= error_dict["influence_handle_errors"]
         self.__tight_bounds_alpha = alpha_tight # for the aribitrarilty tight bound density type. 
         self.__tight_bounds_knn_num =  k_nn
+        self.__kernel = kernel
 
 
 
@@ -117,6 +118,30 @@ class bounds_class:
             "tight": np.sum(np.logical_and((true - tight_bounds_l) > 0, (tight_bounds_u - true) > 0)) / self.__MC_num if tight_bounds_l else np.nan,
             "inf": np.sum(np.logical_and((true - inf_l) > 0, (inf_u - true) > 0)) / self.__MC_num if inf_l else np.nan,
             "enDive": np.sum(np.logical_and((true - enDive_l) > 0, (enDive_u - true) > 0)) / self.__MC_num if enDive_l else np.nan
+            }
+
+        return values_dict
+    
+
+    
+    def bound_width(self):
+        dp_bounds_l, dp_bounds_u =   self.get_bounds_dp()
+        bha_bounds_l, bha_bounds_u = self.get_bounds_Bha()
+        bha_knn_bounds_l, bha_knn_bounds_u =  self.get_bounds_Bha_knn()
+        tight_bounds_l, tight_bounds_u  =  self.get_bounds_tight()
+        inf_l, inf_u = self.get_inf_bounds()
+        enDive_l, enDive_u = self.get_Bounds_enDive()
+        Maha_upper = self.get_upper_Maha()
+
+
+        values_dict = {
+
+            "Dp": np.mean(np.subtract(dp_bounds_u, dp_bounds_l)) if dp_bounds_l else np.nan,
+            "Bha": np.mean(np.subtract(bha_bounds_u, bha_bounds_l)) if bha_bounds_l else np.nan,
+            "Bha_knn": np.mean(np.subtract(bha_knn_bounds_u, bha_knn_bounds_l)) if bha_knn_bounds_l else np.nan,
+            "tight": np.mean(np.subtract(tight_bounds_u, tight_bounds_l)) if tight_bounds_l else np.nan,
+            "inf": np.mean(np.subtract(inf_u, inf_l)) if inf_l else np.nan,
+            "enDive": np.mean(np.subtract(enDive_u, enDive_l)) if enDive_l else np.nan
             }
 
         return values_dict
@@ -228,7 +253,7 @@ class bounds_class:
                 upper_bounds_inf.append(up)
             
             if "enDive" in self.__get_bound_types():
-                Dp = eng.EnDive(data0, data1, 'type', "DP",'quiet', 'kernel', 'uniform','est', 1, nargout= 1)
+                Dp = eng.EnDive(data0, data1, 'type', "DP",'quiet', 'kernel', self.__kernel,'est', 2, nargout= 1)
                 if Dp > 1: ### this is kind of ghetto to do 
                     Dp = 1
                     
