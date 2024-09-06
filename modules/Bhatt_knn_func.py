@@ -79,6 +79,9 @@ def __knn_density_calc(distances_matrix, k, p, n): # p is the dimension
     for i in range(len(vec)):
         dist = distances_matrix[i][k-1]
         vol=  __calculate_volume(p, dist)
+        # print("N", n)
+        # print("K", k)
+        # print("vol", vol)
         vec[i] =  k /  ( n * vol  ) ### some people use k-1 for variance purposes
     return vec
 
@@ -91,7 +94,7 @@ def __calculate_volume(d, radius):
 def knn_num_calc(N, d):# N is size of set and d is dimension
     mult = __multiplier(d)
     N_exp = N**(4/ (d+4))
-    val=  int( mult * N_exp)
+    val=  round( mult * N_exp)
     if d <=2:
         print("This function doesn't work for dimension <3")
     return val
