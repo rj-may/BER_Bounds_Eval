@@ -74,7 +74,7 @@ for i in sample_sizes:
     
     print("done with ", i, " in ",  end -start )
 
-file_path = 'sim_data/normal_beta3D.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
+file_path = 'sim_data/normal_beta3.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
 objects_to_save = bound_obj_lst
 
 with open(file_path, 'wb') as file:

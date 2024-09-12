@@ -57,6 +57,7 @@ for i in sample_sizes:
     sample_size =i 
     
     k = knn_num_calc(i, dimension)
+    # print(k)
     
     if  i < 750:
         threads =2
