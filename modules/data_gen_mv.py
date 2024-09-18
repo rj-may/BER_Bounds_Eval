@@ -9,10 +9,10 @@ class data_gen_multivariate:
         self.__params1 = params1
         
         ### create two classes with certain parameters that you can smample from
+        
+        ### Note the function should be np.random.multivariate_normal but I guess it could be anythin.
         self.__dist0 = distribution(func0, self.__params0)
         self.__dist1 = distribution(func1, self.__params1)
-
-
 
 
     def sample(self, size ):
@@ -38,3 +38,4 @@ class distribution:
 
     def sample(self, num ):
         return self.__func(size = num, **self.__params)
+    

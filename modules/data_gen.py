@@ -33,7 +33,8 @@ class data_gen:
                 class0.append(a)
                 class1.append(b)  
             return np.array(class0).T, np.array(class1).T
-    
+        
+        
     def __len__(self):
         return self.__dim
     
