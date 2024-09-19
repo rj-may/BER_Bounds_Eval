@@ -73,6 +73,7 @@ from modules.data_gen_gauss_mix import data_gen_gauss_mix
 
 
 def main(dim ):
+    dim = int(dim)
     dim_str= str(dim)
     dimension= int(dim)
     print("Computing bimodal normal BER plot with dimension " + dim_str)
@@ -102,7 +103,7 @@ def main(dim ):
 
 
     file_path = 'sim_data/bimodal_normal'+ dim_str+'.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
-    objects_to_save = [bound_obj_lst, mean_lst]
+    objects_to_save = [bound_obj_lst, mean_lst, x_BER]
 
     with open(file_path, 'wb') as file:
             # Use pickle.dump to serialize and write the list of objects to the file
