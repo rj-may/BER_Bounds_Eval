@@ -31,17 +31,17 @@ class data_gen_gauss_mix:
 
         
     def sample(self, sample_size):
-            vector = np.random.binomial( self.__gaussian_counts - 1, 1/ self.__gaussian_counts,  size =sample_size)
-            # print(vector)
+            # vector = np.random.binomial( self.__gaussian_counts - 1, 1/ self.__gaussian_counts,  size =sample_size)
+            # # print(vector)
 
-            _ , counts = np.unique(vector, return_counts=True)
-            weights  = counts / sample_size
+            # _ , counts = np.unique(vector, return_counts=True)
+            # weights  = counts / sample_size
 
             # print(weights)
 
             gmm = self.__gmm
 
-            gmm.weights_ = weights
+            # gmm.weights_ = weights
 
             samples, _ = gmm.sample(n_samples=sample_size)
 
