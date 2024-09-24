@@ -19,24 +19,27 @@ from modules.knn_density import get_knn_densities
 
 def get_tight_bounds_knn(data0, data1, alpha=50, k=0):
 
-
-    get_knn_densities(data0, data1, k)
     ## this is equivalent to the Bhattacharyya distance but we are using the knn densities
     p0, p1 =  get_knn_densities(data0, data1, k)
+    
+    prior_c0 = len(data0) /  (len(data0) +  len(data1))### probability of each class
+    prior_c1 = len(data1) / (len(data0) +  len(data1))
 
-
-    lower, upper = __calc_tight_bounds_via_knn_density(p0, p1, alpha)
+    lower, upper = __calc_tight_bounds_via_knn_density(p0, p1, prior_c0, prior_c1,  alpha)
 
     return lower, upper
 
 
-def __calc_tight_bounds_via_knn_density(density0, density1, alpha): 
+def __calc_tight_bounds_via_knn_density(density0, density1, prior_c0, prior_c1,  alpha): 
     d1 = density1
     d0 = density0 
 
-    fx = 0.5 * (d0 + d1)
+    fx = prior_c0 * d0 + prior_c1 * d1
 
     px = d1 / (d0 + d1)
+
+    ### do I need to do this?
+    px = np.minimum(px, 1- px )
     
     # n = len(density0) + len(density1) 
     

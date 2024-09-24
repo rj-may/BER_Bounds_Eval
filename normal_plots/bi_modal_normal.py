@@ -66,7 +66,7 @@ for j in x_BER:
 
 ### import good stuff
 from modules.multi_bounds_v3 import bounds_class
-from modules.Bhatt_knn_func import knn_num_calc
+from modules.knn_density import knn_num_calc
 from modules.data_gen_gauss_mix import data_gen_gauss_mix
 
 # from modules.data_gen import data_gen

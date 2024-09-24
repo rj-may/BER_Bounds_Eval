@@ -2,10 +2,13 @@
 this is the master class that can calculate multiple bounds
 '''
 from modules.dp_func import get_bounds_dp as calc_bounds_dp
-from modules.tight_knn_func import get_tight_bounds_knn as calc_tight_bounds_knn
 from modules.Bhattacharyya_func import get_Bhattacharyya_bounds as calc_Bhattacharyya_bounds
 from modules.Bhattacharyya_func import get_Maha_upper as calc_Mahalanobis_upper
-from modules.Bhatt_knn_func import Bhattacharyya_knn_bounds as calc_Bhatt_knn_bounds
+
+from modules.tight_knn_func import __calc_tight_bounds_via_knn_density as calc_tight_bounds_knn
+from modules.Bhatt_knn_func import __calc_bha_knn_bounds as calc_Bhatt_knn_bounds
+from modules.knn_density import get_knn_densities as calc_knn_densities
+
 # from modules.influence import get_influence_bounds as calc_influence_bounds
 
 import matlab.engine
@@ -34,7 +37,7 @@ class bounds_class:
         self.__Bha_knn_handle_errors = error_dict["Bha_knn_handle_errors"]
         self.__influence_handle_errors= error_dict["influence_handle_errors"]
         self.__tight_bounds_alpha = alpha_tight # for the aribitrarilty tight bound density type. 
-        self.__tight_bounds_knn_num =  k_nn
+        self.__knn_num =  k_nn
         self.__kernel = kernel
 
 
@@ -224,20 +227,28 @@ class bounds_class:
                 lower_bounds_dp.append(dp_l)
                 upper_bounds_dp.append(dp_u)
 
-            if "tight" in self.__get_bound_types():
-                l, u = calc_tight_bounds_knn(data0, data1, alpha=self.__tight_bounds_alpha, k=self.__tight_bounds_knn_num)
-                lower_bounds_tight.append(l)
-                upper_bounds_tight.append(u)
-
             if "Bhattacharyya" in self.__get_bound_types():
                 l, u = calc_Bhattacharyya_bounds(data0, data1, handle_errors = self.get_handle_errors_Bha())
                 lower_bounds_Bha.append(l)
                 upper_bounds_Bha.append(u)
             
-            if "Bhatt_knn" in self.__get_bound_types():
-                a, b = calc_Bhatt_knn_bounds(data0, data1, k = self.__tight_bounds_knn_num, handle_errors= self.get_handle_errors_Bha_knn())
-                lower_bounds_Bha_knn.append(a)
-                upper_bounds_Bha_knn.append(b)
+
+            if "tight" in self.__get_bound_types() or "Bhatt_knn" in self.__get_bound_types():
+                p0, p1= calc_knn_densities(data0, data1, self.__knn_num)
+                prior0 = len(data0)/ (len(data0) + len(data1))
+                prior1 = len(data1) / (len(data0) + len(data1))
+
+                if "tight" in self.__get_bound_types():
+                    l, u = calc_tight_bounds_knn(p0, p1, prior0, prior1, alpha=self.__tight_bounds_alpha)
+                    lower_bounds_tight.append(l)
+                    upper_bounds_tight.append(u)
+
+                if "Bhatt_knn" in self.__get_bound_types():
+                    a, b = calc_Bhatt_knn_bounds(p0, p1, prior0, prior1,  handle_errors= self.get_handle_errors_Bha_knn())
+                    lower_bounds_Bha_knn.append(a)
+                    upper_bounds_Bha_knn.append(b)
+                
+
 
             if "Mahalanobis" in  self.__get_bound_types():
                 a =calc_Mahalanobis_upper(data0, data1)

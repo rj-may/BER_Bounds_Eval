@@ -12,7 +12,6 @@ from modules.knn_density import get_knn_densities
 def Bhattacharyya_knn_bounds(data0, data1, k=0 , handle_errors = "worst"):
 
 
-    get_knn_densities(data0, data1, k)
     ## this is equivalent to the Bhattacharyya distance but we are using the knn densities
     p0, p1 =  get_knn_densities(data0, data1, k)
 
@@ -31,6 +30,7 @@ def Bhattacharyya_knn_bounds(data0, data1, k=0 , handle_errors = "worst"):
 def __calc_bha_knn_bounds(p0, p1, P_c0, P_c1, handle_errors):
     BC= np.sum(np.sqrt(p0 * p1))
     upper =    BC * np.sqrt(P_c0 *P_c1  )
+    
     if BC > 1:
         if handle_errors == "worst": #thoeretical worst value for each 
             lower, upper = .5, .5
