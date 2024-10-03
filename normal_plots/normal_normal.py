@@ -35,7 +35,6 @@ MC_num = 400
 
 sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
 
-bound_types =  ["dp", "Bhattacharyya", "Bhatt_knn",  "influence", "enDive"]
 
 def main(dim = 3):
 
@@ -73,7 +72,7 @@ def main(dim = 3):
         else:
             threads = 4
 
-        bounds = bounds_class(generator, sample_size = sample_size, threads =threads, bound_types= bound_types,   MC_num = MC_num, k_nn  =k )
+        bounds = bounds_class(generator, sample_size = sample_size, threads =threads,   MC_num = MC_num, k_nn  =k )
         
         bound_obj_lst.append(bounds)
         

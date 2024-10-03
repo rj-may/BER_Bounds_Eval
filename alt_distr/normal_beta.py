@@ -27,7 +27,7 @@ sys.path.append(updated_directory)
 
 ### import good stuff
 from modules.multi_bounds_v3 import bounds_class
-from modules.Bhatt_knn_func import knn_num_calc
+from modules.knn_density import knn_num_calc
 from modules.data_gen import data_gen
 
 
@@ -50,8 +50,7 @@ def main(dim = 3):
     params0= {"loc":0, "scale" : 1}
     params1 = {'a': 20, 'b':20}
 
-    generator = data_gen(func0, func1,  params0, params1, dimension)
-    bound_types =  ["dp", "Bhattacharyya", "Bhatt_knn",  "influence", "enDive"]
+    generator = data_gen(func0, func1,  params0, params1, dimension, boundary =[0.3219999999942793, 0.6839999999940787] )
 
 
     for i in sample_sizes:
@@ -66,7 +65,7 @@ def main(dim = 3):
         else:
             threads = 4
 
-        bounds = bounds_class(generator, sample_size = sample_size, threads =threads, bound_types= bound_types,   MC_num = MC_num, k_nn  =k )
+        bounds = bounds_class(generator, sample_size = sample_size, threads =threads,   MC_num = MC_num, k_nn  =k )
         
         bound_obj_lst.append(bounds)
                 

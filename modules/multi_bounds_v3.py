@@ -35,7 +35,7 @@ class bounds_class:
         self.__dp_handle_errors = error_dict["dp_handle_errors"]
         self.__Bha_handle_errrors = error_dict["Bha_handle_errors"]
         self.__Bha_knn_handle_errors = error_dict["Bha_knn_handle_errors"]
-        self.__influence_handle_errors= error_dict["influence_handle_errors"]
+        # self.__influence_handle_errors= error_dict["influence_handle_errors"]
         self.__tight_bounds_alpha = alpha_tight # for the aribitrarilty tight bound density type. 
         self.__knn_num =  k_nn
         self.__kernel = kernel
@@ -59,6 +59,8 @@ class bounds_class:
         self.__upper_bounds_inf = []
         self.__lower_bounds_enDive = []
         self.__upper_bounds_enDive = []
+
+        self.__obs_BER = []
 
         self.__parallel_simulation(self.__MC_num, self.__threads) #wild fun 
 
@@ -124,6 +126,46 @@ class bounds_class:
             }
 
         return values_dict
+    
+    def experimental_validity(self):
+        exp_BER = self.__obs_BER
+
+        dp_bounds_l, dp_bounds_u =   self.get_bounds_dp()
+        bha_bounds_l, bha_bounds_u = self.get_bounds_Bha()
+        bha_knn_bounds_l, bha_knn_bounds_u =  self.get_bounds_Bha_knn()
+        tight_bounds_l, tight_bounds_u  =  self.get_bounds_tight()
+        inf_l, inf_u = self.get_inf_bounds()
+        enDive_l, enDive_u = self.get_Bounds_enDive()
+
+        exp_BER = np.array(exp_BER)
+        dp_bounds_l  = np.array(dp_bounds_l)
+        dp_bounds_u = np.array(dp_bounds_u)
+        bha_bounds_l = np.array(bha_bounds_l)
+        bha_bounds_u = np.array(bha_bounds_u)
+        bha_knn_bounds_l = np.array(bha_knn_bounds_l)
+        bha_knn_bounds_u = np.array(bha_knn_bounds_u)
+        tight_bounds_l = np.array(tight_bounds_l)
+        tight_bounds_u = np.array(tight_bounds_l)
+        inf_l, inf_u = self.get_inf_bounds()
+        inf_l = np.array(inf_l)
+        inf_u = np.array(inf_u)
+        enDive_l = np.array(enDive_l)
+        enDive_u = np.array(enDive_u)
+
+        # Ensure arrays are being compared properly and handle cases where the lower bound is None or an empty array
+        def calculate_values(exp_BER, bounds_l, bounds_u, mc_num):
+            return np.sum(np.logical_and((exp_BER - bounds_l) > 0, (bounds_u - exp_BER) > 0)) / mc_num if bounds_l is not None and len(bounds_l) > 0 else np.nan
+        # print(exp_BER)
+        values_dict = {
+            "Dp": calculate_values(exp_BER, dp_bounds_l, dp_bounds_u, self.__MC_num),
+            "Bha": calculate_values(exp_BER, bha_bounds_l, bha_bounds_u, self.__MC_num),
+            "Bha_knn": calculate_values(exp_BER, bha_knn_bounds_l, bha_knn_bounds_u, self.__MC_num),
+            "tight": calculate_values(exp_BER, tight_bounds_l, tight_bounds_u, self.__MC_num),
+            "inf": calculate_values(exp_BER, inf_l, inf_u, self.__MC_num),
+            "enDive": calculate_values(exp_BER, enDive_l, enDive_u, self.__MC_num)
+        }
+        return values_dict
+
     
 
     
@@ -207,32 +249,36 @@ class bounds_class:
     def __simulate_for_parallel(self, MC_iter):
         MC_iter = MC_iter
 
-        
-        eng = matlab.engine.start_matlab()
-        eng.cd(r'modules', nargout=0)
+        if "influence" in self.__get_bound_types() or "enDive" in self.__get_bound_types():
+            eng = matlab.engine.start_matlab()
+            eng.cd(r'modules', nargout=0)
 
         
-        lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha = [], [], [], [], [], []
-        lower_bounds_Bha_knn , upper_bounds_Bha_knn, upper_bounds_Maha = [], [], []
-        lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive = [], [], [], []
+        lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha = np.zeros(MC_iter), np.zeros(MC_iter), np.zeros(MC_iter), np.zeros(MC_iter), np.zeros(MC_iter), np.zeros(MC_iter)
+        lower_bounds_Bha_knn , upper_bounds_Bha_knn, upper_bounds_Maha = np.zeros(MC_iter), np.zeros(MC_iter), np.zeros(MC_iter)
+        lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive = np.zeros(MC_iter), np.zeros(MC_iter), np.zeros(MC_iter), np.zeros(MC_iter)
+
+        obs_BER =np.zeros(MC_iter)
         
         for i in range(MC_iter):
             
             data0,data1 = self.__data_generator.sample(self.__sample_size)
-            
 
+            # print( self.__data_generator.has_boundary())
+            if self.__data_generator.has_boundary():
+                ber = self.__data_generator.get_est_BER(data0, data1)
+                obs_BER[i] = ber
 
             if "dp" in self.__get_bound_types():
                 dp_l, dp_u = calc_bounds_dp(data0, data1, handle_errors = self.get_handle_errors_dp())
-                lower_bounds_dp.append(dp_l)
-                upper_bounds_dp.append(dp_u)
+                lower_bounds_dp[i] = dp_l
+                upper_bounds_dp[i] = dp_u
 
             if "Bhattacharyya" in self.__get_bound_types():
                 l, u = calc_Bhattacharyya_bounds(data0, data1, handle_errors = self.get_handle_errors_Bha())
-                lower_bounds_Bha.append(l)
-                upper_bounds_Bha.append(u)
+                lower_bounds_Bha[i] = l
+                upper_bounds_Bha[i] = u
             
-
             if "tight" in self.__get_bound_types() or "Bhatt_knn" in self.__get_bound_types():
                 p0, p1= calc_knn_densities(data0, data1, self.__knn_num)
                 prior0 = len(data0)/ (len(data0) + len(data1))
@@ -240,19 +286,18 @@ class bounds_class:
 
                 if "tight" in self.__get_bound_types():
                     l, u = calc_tight_bounds_knn(p0, p1, prior0, prior1, alpha=self.__tight_bounds_alpha)
-                    lower_bounds_tight.append(l)
-                    upper_bounds_tight.append(u)
+                    lower_bounds_tight[i]  = l
+                    upper_bounds_tight[i]  = u
 
                 if "Bhatt_knn" in self.__get_bound_types():
                     a, b = calc_Bhatt_knn_bounds(p0, p1, prior0, prior1,  handle_errors= self.get_handle_errors_Bha_knn())
-                    lower_bounds_Bha_knn.append(a)
-                    upper_bounds_Bha_knn.append(b)
+                    lower_bounds_Bha_knn[i]  = a
+                    upper_bounds_Bha_knn[i] = b
                 
-
 
             if "Mahalanobis" in  self.__get_bound_types():
                 a =calc_Mahalanobis_upper(data0, data1)
-                upper_bounds_Maha.append(a)
+                upper_bounds_Maha[i] = a
 
             if "influence" in self.__get_bound_types():
                 estim = eng.hellingerDivergence(data0, data1,[], [],  nargout= 1)
@@ -260,8 +305,8 @@ class bounds_class:
                 up = 1/2 * BC 
                 low = 1/2 - 1/2 * np.sqrt(1- BC**2)
 
-                lower_bounds_inf.append(low)
-                upper_bounds_inf.append(up)
+                lower_bounds_inf[i] = low
+                upper_bounds_inf[i] = up
             
             if "enDive" in self.__get_bound_types():
                 Dp = eng.EnDive(data0, data1, 'type', "DP",'quiet', 'kernel', self.__kernel,'est', 2, nargout= 1)
@@ -272,12 +317,12 @@ class bounds_class:
                     u = 1/2 -1/2 *Dp
                     l = 1/2 - 1/2 * np.sqrt(Dp)
                 else:
-                    u, l = 1/2 ,1/2
-                lower_bounds_enDive.append(l)
-                upper_bounds_enDive.append(u)
+                    l, u = 1/2 ,1/2
+                lower_bounds_enDive[i] = l
+                upper_bounds_enDive[i] = u
 
         eng.quit()
-        return lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha, lower_bounds_Bha_knn, upper_bounds_Bha_knn, upper_bounds_Maha, lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive
+        return obs_BER, lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha, lower_bounds_Bha_knn, upper_bounds_Bha_knn, upper_bounds_Maha, lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive
 
 
     def __parallel_simulation(self, MC_iter, num_threads):
@@ -288,7 +333,7 @@ class bounds_class:
 
             for future in concurrent.futures.as_completed(futures):
                 # print(future.result())
-                lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha, lower_bounds_Bha_knn, upper_bounds_Bha_knn, upper_bounds_Maha,  lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive    = future.result()
+                obs_BER, lower_bounds_dp, upper_bounds_dp, lower_bounds_tight, upper_bounds_tight, lower_bounds_Bha, upper_bounds_Bha, lower_bounds_Bha_knn, upper_bounds_Bha_knn, upper_bounds_Maha,  lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive    = future.result()
                 self.__lower_bounds_dp.extend(lower_bounds_dp)
                 self.__upper_bounds_dp.extend(upper_bounds_dp)
                 self.__lower_bounds_tight.extend(lower_bounds_tight)
@@ -302,3 +347,5 @@ class bounds_class:
                 self.__upper_bounds_inf.extend(upper_bounds_inf)
                 self.__lower_bounds_enDive.extend(lower_bounds_enDive)
                 self.__upper_bounds_enDive.extend(upper_bounds_enDive)
+
+                self.__obs_BER.extend(obs_BER)

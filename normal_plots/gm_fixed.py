@@ -6,7 +6,6 @@ import math
 import pickle
 import time
 
-
 ### set parent directory 
 import os
 import sys
@@ -28,39 +27,39 @@ sys.path.append(updated_directory)
 ### import good stuff
 from modules.multi_bounds_v3 import bounds_class
 from modules.knn_density import knn_num_calc
-from modules.data_gen import data_gen
+from modules.data_gen_gauss_mix import data_gen_gauss_mix
+# from modules.data_gen_mv import data_gen_multivariate
+
+MC_num = 400
 
 
-sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
+# sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
 
+sample_sizes =  np.logspace(1.74, 3.3011, 10 , endpoint = True, dtype = int)
 
 def main(dim = 3):
-   
+
     dim_str= str(dim)
-    dimension= int(dim)
-    print("Computing uniform  uniform  with dimension" + dim_str)
+    dim = int(dim)
 
-
-    MC_num = 400
-
+    print("Computing gaussian mixutre  with mean separation of 2.56 and -2.56  and dimension of " + dim_str)
+    
     bound_obj_lst = []
 
-    func0 = np.random.uniform
-    func1 = np.random.uniform
+    mean_sep = 2.56
+        
+    params0 = {'means': [[-1 * mean_sep], [mean_sep]], 'covariances':  [ [[1]], [[1]]]}
 
-    params0 = {'low': 0, 'high':1}
-    params1= {"low":.8, "high" : 1.8}
+    params1 = {'mean' : np.zeros(dim), 'cov': np.identity(dim) }
 
-    generator = data_gen(func0, func1,  params0, params1, dimension, boundary=.9)
-
-
-
+    generator = data_gen_gauss_mix(params0, params1, boundary = [-1.55, 1.55] )
+    
     for i in sample_sizes:
 
         start = time.time()
         sample_size =i 
         
-        k = knn_num_calc(i, dimension)
+        k = knn_num_calc(i, dim)
         
         if  i < 750:
             threads =2
@@ -70,23 +69,26 @@ def main(dim = 3):
         bounds = bounds_class(generator, sample_size = sample_size, threads =threads,   MC_num = MC_num, k_nn  =k )
         
         bound_obj_lst.append(bounds)
-                        
+        
+        
+                
         end = time.time()
         
         
         print("done with ", i, " in ",  end -start )
 
+    file_path = 'sim_data/gm'+ dim_str +'.pkl'
 
-    file_path = 'sim_data/paired_uniforms'+ dim_str + '.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
-    objects_to_save = bound_obj_lst
+    objects_to_save = [bound_obj_lst, sample_sizes]
 
     with open(file_path, 'wb') as file:
             # Use pickle.dump to serialize and write the list of objects to the file
             pickle.dump(objects_to_save, file)
     print(f'Objects saved to {file_path}')
-        
 
 
 for j in range(1,len(sys.argv) ):
     #  print(sys.argv[j])
      main(sys.argv[j])
+
+
