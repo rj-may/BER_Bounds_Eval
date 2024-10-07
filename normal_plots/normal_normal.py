@@ -58,7 +58,7 @@ def main(dim = 3):
     params0 = {'mean': mean1, 'cov': covariance1}
     params1  = {'mean': mean2, 'cov': covariance1}
         
-    generator  = data_gen_multivariate(func0, func1,  params0, params1 )
+    generator  = data_gen_multivariate(func0, func1,  params0, params1, boundary = mean_sep/2 )
     
     for i in sample_sizes:
 
