@@ -311,9 +311,11 @@ class bounds_class:
 
                 self.__obs_BER.extend(obs_BER)
 
-        data_matlab = matlab.double(np.array(data_set))  # Convert to list of lists
+        data_matlab = np.array(data_set)  # Convert to list of lists
 
         # print(len(data_matlab[0]))
+        # print(data_matlab.shape)
+
         lower_bounds_enDive, upper_bounds_enDive, lower_bounds_inf, upper_bounds_inf = matlab_engine.matlab_calc(data_matlab, self.__kernel,  nargout=4)
 
         lower_bounds_enDive = np.array(lower_bounds_enDive)
@@ -321,9 +323,9 @@ class bounds_class:
         lower_bounds_inf = np.array(lower_bounds_inf)
         upper_bounds_inf = np.array(upper_bounds_inf)
 
-        self.__lower_bounds_inf.extend(lower_bounds_inf)
-        self.__upper_bounds_inf.extend(upper_bounds_inf)
-        self.__lower_bounds_enDive.extend(lower_bounds_enDive)
-        self.__upper_bounds_enDive.extend(upper_bounds_enDive)   
+        self.__lower_bounds_inf.extend(lower_bounds_inf[0])
+        self.__upper_bounds_inf.extend(upper_bounds_inf[0])
+        self.__lower_bounds_enDive.extend(lower_bounds_enDive[0])
+        self.__upper_bounds_enDive.extend(upper_bounds_enDive[0])   
 
         ### lower_bounds_inf, upper_bounds_inf, lower_bounds_enDive, upper_bounds_enDive

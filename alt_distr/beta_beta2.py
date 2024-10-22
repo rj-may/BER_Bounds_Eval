@@ -6,9 +6,13 @@ import math
 import pickle
 import time
 
+
 ### set parent directory 
 import os
 import sys
+
+import matlab.engine
+
 
 # Get the current working directory
 current_directory = os.getcwd()
@@ -25,50 +29,56 @@ sys.path.append(updated_directory)
 
 
 ### import good stuff
-from modules.multi_bounds_v3 import bounds_class
+from modules.multi_bounds_parfor import bounds_class
 from modules.knn_density import knn_num_calc
-from modules.data_gen_gauss_mix import data_gen_gauss_mix
-# from modules.data_gen_mv import data_gen_multivariate
-
-MC_num = 400
+from modules.data_gen import data_gen
 
 
 sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
 
-# sample_sizes =  np.logspace(1.74, 3.3011, 10 , endpoint = True, dtype = int)
 
-def main(dim = 3):
+def main(dim =3):
 
-    dim_str= str(dim)
-    dim = int(dim)
-
-    print("Computing gaussian mixutre  with mean separation of 2.56 and -2.56  and dimension of " + dim_str)
     
+    dim_str= str(dim)
+    dimension= int(dim)
+    print("Computing beta beta with dimension" + dim_str)
+
+
+    MC_num = 400
+
     bound_obj_lst = []
 
-    mean_sep = 2.56
-        
-    params0 = {'means': [[-1 * mean_sep], [mean_sep]], 'covariances':  [ [[1]], [[1]]]}
+    func0 = np.random.beta
+    func1 = np.random.beta
 
-    params1 = {'mean' : np.zeros(dim), 'cov': np.identity(dim) }
+    params0= {'a':2, 'b':5}
+    params1 = {'a': 5, 'b':2}
 
-    generator = data_gen_gauss_mix(params0, params1, boundary = [-1.55, 1.55] )
-    
+
+    generator = data_gen(func0, func1,  params0, params1, dimension, boundary=.5)
+
+    eng = matlab.engine.start_matlab()
+    eng.cd(r'modules', nargout=0)
+
+
     for i in sample_sizes:
 
         start = time.time()
         sample_size =i 
         
-        k = knn_num_calc(i, dim)
+        k = knn_num_calc(i, dimension)
         
         if  i < 750:
             threads =2
         else:
             threads = 4
 
-        bounds = bounds_class(generator, sample_size = sample_size, threads =threads,   MC_num = MC_num, k_nn  =k )
+        bounds = bounds_class(generator, eng,  sample_size = sample_size, threads =threads,  MC_num = MC_num, k_nn  =k )
         
         bound_obj_lst.append(bounds)
+        
+        
         
         
                 
@@ -77,18 +87,18 @@ def main(dim = 3):
         
         print("done with ", i, " in ",  end -start )
 
-    file_path = 'sim_data/gm'+ dim_str +'.pkl'
+    file_path = 'sim_data/beta_beta' + dim_str + '.pkl'
 
-    objects_to_save = [bound_obj_lst, sample_sizes]
+    objects_to_save = bound_obj_lst
 
     with open(file_path, 'wb') as file:
             # Use pickle.dump to serialize and write the list of objects to the file
             pickle.dump(objects_to_save, file)
     print(f'Objects saved to {file_path}')
 
+    eng.quit()
+
 
 for j in range(1,len(sys.argv) ):
     #  print(sys.argv[j])
      main(sys.argv[j])
-
-
