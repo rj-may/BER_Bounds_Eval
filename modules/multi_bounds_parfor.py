@@ -294,8 +294,12 @@ class bounds_class:
 
 
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-            futures = [executor.submit(self.__simulate_for_parallel, data_set[i * MC_iter_per_thread: (i+1) * MC_iter_per_thread]) for i in range(num_threads)]
+        with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
+            # Create a list of futures to execute the simulation in parallel
+            futures = [
+                executor.submit(self.__simulate_for_parallel, data_set[i * MC_iter_per_thread: (i + 1) * MC_iter_per_thread])
+                for i in range(num_threads)
+            ]
 
             for future in futures:
                 # print(future.result())
