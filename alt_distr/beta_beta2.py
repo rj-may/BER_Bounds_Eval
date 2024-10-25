@@ -34,8 +34,14 @@ from modules.knn_density import knn_num_calc
 from modules.data_gen import data_gen
 
 
-sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
+# sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
 
+start = math.log10(54)
+end = math.log10(5000)
+
+sample_sizes = np.logspace(start, end+.00001, 11, dtype=int)
+
+print(sample_sizes)
 
 def main(dim =3):
 
@@ -69,11 +75,14 @@ def main(dim =3):
         
         k = knn_num_calc(i, dimension)
         
-        if  i < 750:
-            threads =2
+        if  i < 250:
+            threads = 5
+        elif i < 500:
+            threads = 10 # was 8
+        elif i < 1000:
+            threads = 16
         else:
-            threads = 4
-
+            threads = 20
         bounds = bounds_class(generator, eng,  sample_size = sample_size, threads =threads,  MC_num = MC_num, k_nn  =k )
         
         bound_obj_lst.append(bounds)
@@ -89,7 +98,7 @@ def main(dim =3):
 
     file_path = 'sim_data/beta_beta' + dim_str + '.pkl'
 
-    objects_to_save = bound_obj_lst
+    objects_to_save = [bound_obj_lst, sample_sizes]
 
     with open(file_path, 'wb') as file:
             # Use pickle.dump to serialize and write the list of objects to the file
