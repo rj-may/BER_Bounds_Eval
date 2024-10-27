@@ -241,7 +241,7 @@ class bounds_class:
 
 
     ##this code is written so there is no issues with multiple functions accessing the same list in __parallel_simulation
-    def __simulate_for_parallel(self, data_set):
+    def _simulate_for_parallel(self, data_set):
         MC_iter = len(data_set)
 
         
@@ -297,7 +297,7 @@ class bounds_class:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
             # Create a list of futures to execute the simulation in parallel
             futures = [
-                executor.submit(self.__simulate_for_parallel, data_set[i * MC_iter_per_thread: (i + 1) * MC_iter_per_thread])
+                executor.submit(self._simulate_for_parallel, data_set[i * MC_iter_per_thread: (i + 1) * MC_iter_per_thread])
                 for i in range(num_threads)
             ]
 

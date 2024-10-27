@@ -80,7 +80,7 @@ def main(dim = 3):
             threads = 20
 
 
-        bounds = bounds_class(generator, sample_size = sample_size, threads =threads,   MC_num = MC_num, k_nn  =k )
+        bounds = bounds_class(generator, eng, sample_size = sample_size, threads =threads,   MC_num = MC_num, k_nn  =k )
         
         bound_obj_lst.append(bounds)
                 
