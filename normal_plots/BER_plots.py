@@ -42,7 +42,7 @@ for diff in diff_lst:
     x = np.arange(-10, 10 + dx, dx)
 
     # Define the normal distributions
-    f0 = .5 * norm.pdf(x, loc= diff * -1, scale =1) + .5* norm.pdf(x, loc=diff, scale =1)
+    f0 = norm.pdf(x, loc=diff, scale =1)
 
     f1 = norm.pdf(x, loc=0, scale =1)
 

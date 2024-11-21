@@ -70,7 +70,6 @@ $$ p_k(x)  =\frac{k}{n} \frac{1}{ \frac{\pi^{p/2}}{\Gamma(p/2+1)}  \|x-x_k \|^p}
 
 
 
-### used as a default /keyword parameter 
 def knn_num_calc(N, d):# N is size of set and d is dimension
     mult = __multiplier(d)
     N_exp = N**(4/ (d+4))

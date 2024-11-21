@@ -43,7 +43,7 @@ for diff in diff_lst:
     x = np.arange(-10, 10 + dx, dx)
 
     # Define the normal distributions
-    f0 = .5 * norm.pdf(x, loc= diff * -1, scale =1) + .5* norm.pdf(x, loc=diff, scale =1)
+    f0 =  norm.pdf(x, loc=diff, scale =1)
 
     f1 = norm.pdf(x, loc=0, scale =1)
 
@@ -106,10 +106,8 @@ def main(dim ):
         
         k = knn_num_calc(sample_size, dim)
 
-        
 
-
-        bounds = bounds_class(generator,eng, sample_size=  sample_size, threads =threads,  MC_num = MC_num, k_nn=k)
+        bounds = bounds_class(generator, eng, sample_size=  sample_size, threads =threads,  MC_num = MC_num, k_nn=k)
         
         bound_obj_lst.append(bounds)
         
