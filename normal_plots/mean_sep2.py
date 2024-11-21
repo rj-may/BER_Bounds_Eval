@@ -42,7 +42,7 @@ for mean in mean_list:
     x = np.arange(-10, 10 + dx, dx)
 
     # Define the normal distributions
-    f0 = norm.pdf(x, loc= mean * -1, scale =1)
+    f0 = norm.pdf(x, loc= mean , scale =1)
 
     f1 = norm.pdf(x, loc=0, scale =1)
 

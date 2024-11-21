@@ -78,7 +78,7 @@ def main(dim ):
     dim = int(dim)
     dim_str= str(dim)
     dimension= int(dim)
-    print("Computing normal normal BER plot with dimension " + dim_str)
+    print("Computing normal normal BER plot with dimension " + dim_str + " samples = " + sample_size)
     bound_obj_lst = []
 
 
@@ -117,7 +117,7 @@ def main(dim ):
         print("done with ", j, " in ",  end -start )
 
 
-    file_path = 'sim_data/BER_normals'+ dim_str+'.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
+    file_path = 'sim_data/BER_normals'+ dim_str+ "_"+ str(sample_size)+'.pkl' # DONT FORGET TO CHANGE ME IF YOU COPY AND PASTE
     objects_to_save = [bound_obj_lst, mean_lst, x_BER]
 
     with open(file_path, 'wb') as file:
