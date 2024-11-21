@@ -78,7 +78,7 @@ def main(dim ):
     dim = int(dim)
     dim_str= str(dim)
     dimension= int(dim)
-    print("Computing normal normal BER plot with dimension " + dim_str + " samples = " + sample_size)
+    print("Computing normal normal BER plot with dimension " + dim_str + " samples = " + str( sample_size))
     bound_obj_lst = []
 
 
