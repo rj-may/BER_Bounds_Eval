@@ -7,7 +7,7 @@ from modules.knn_density import get_knn_densities
 
 import math
 
-def bounds_calcultor(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= False):
+def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= None):
     """
     Calculate all bounds for a single simulation.
 
@@ -57,31 +57,46 @@ def bounds_calcultor(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MAT
     # results["Mahalanobis_upper"] = maha_u
     # Calculate enDive bounds
 
-    if MATLAB:
+    if (MATLAB is not None):
         import matlab.engine
 
-        eng = matlab.engine.start_matlab()
-        eng.cd(r'modules', nargout=0)
-        Dp = eng.EnDive(data0, data1, 'type', "DP", 'quiet', 'kernel', kernel, 'est', 2, nargout=1)
-        if Dp > 1:
-            Dp = 1
-        if Dp > 0:
-            enDive_u = 0.5 - 0.5 * Dp
-            enDive_l = 0.5 - 0.5 * (Dp ** 0.5)
+        if isinstance(MATLAB, matlab.engine.MatlabEngine):
+
+            eng =  MATLAB
+
+            eng.addpath('modules', nargout=0)            
+            
+            Dp = eng.EnDive(data0, data1, 'type', "DP", 'quiet', 'kernel', kernel, 'est', 2, nargout=1)
+            p = prior0
+            q = prior1
+            up = 4 * p * q * Dp  + (p-q)**2
+            if up > 1:
+                up = 1
+            if up > 0:
+                enDive_u = 0.5 - 0.5 * up
+                enDive_l = 0.5 - 0.5 * (up ** 0.5)
+            else:
+                enDive_l, enDive_u = 0.5, 0.5
+            results["enDive_lower"] = enDive_l
+            results["enDive_upper"] = enDive_u
+
+            estim = eng.hellingerDivergence(data0, data1,[], [],  nargout= 1)
+            BC = 1 - estim
+
+            if  4 * prior0 * prior1 * BC**2  >1:
+                print("BC coefficent is estimated bo greater than one for influuence bound. ")
+                up= .5
+                low = .5
+            else: 
+                # print(BC, estim)
+                up = math.sqrt(prior0 * prior1) * BC 
+                low = 1/2 - 1/2 * math.sqrt(1- 4 * prior0 * prior1 * BC**2)
+
+            results["influence_lower"] = low
+            results["influence_upper"] = up
+
         else:
-            enDive_l, enDive_u = 0.5, 0.5
-        results["enDive_lower"] = enDive_l
-        results["enDive_upper"] = enDive_u
+            print("A MATLAB engine was not provided. ")
 
-        estim = eng.hellingerDivergence(data0, data1,[], [],  nargout= 1)
-        BC = 1 - estim
-        up = 1/2 * BC 
-        low = 1/2 - 1/2 * math.sqrt(1- BC**2)
-
-        results["influence_lower"] = low
-        results["influence_upper"] = up
-
-        # Quit MATLAB engine
-        eng.quit()
 
     return results

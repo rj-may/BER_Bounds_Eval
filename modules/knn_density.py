@@ -42,8 +42,6 @@ def get_knn_densities(data0, data1, k) :
     # VERSION 2
     p0 = density0 / sum(density0)
     p1 = density1 / sum(density1)
-    # BC= np.sum(np.sqrt(p0 * p1))
-
 
     return p0, p1
 
@@ -54,6 +52,7 @@ def __knn_density_calc(distances_matrix, k, p, n): # p is the dimension
     for i in range(len(vec)):
         dist = distances_matrix[i][k-1]
         vol=  __calculate_volume(p, dist)
+        # print(p, dist, vol)
         # print("N", n)
         # print("K", k)
         # print("vol", vol)

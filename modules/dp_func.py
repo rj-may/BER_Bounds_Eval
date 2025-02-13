@@ -22,7 +22,7 @@ def get_bounds_dp(data0, data1, handle_errors = "worst"):
     else:
         p = n0 / (n0 +n1)
         q = n1/ (n0 +n1)
-        up = 4 * p * q * Dp  + (p-q)^2
+        up = 4 * p * q * Dp  + (p-q)**2
         return __calc_bounds(up, handle_errors)
     
 def get_dp_bounds(data0, data1, handle_errors = "worst"):
