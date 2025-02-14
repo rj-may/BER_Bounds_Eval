@@ -14,7 +14,10 @@ function [lower_bounds_enDive,upper_bounds_enDive, lower_inf, upper_inf] = matla
     dim4 = size(data_set, 4);
 
 
-
+	if isempty(gcp('nocreate'))
+		parpool('local', 'IdleTimeout', Inf);
+	end
+    
     parfor i = 1:mc_iter
         
         % data0 = data_set(i, 1, : , :);  
