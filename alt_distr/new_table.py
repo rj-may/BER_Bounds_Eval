@@ -41,6 +41,8 @@ sample_sizes = [100, 2000]
 print(sample_sizes)
 
 def main(dim = 3):
+
+    dim = int(dim)
    
     dim_str= str(dim)
     dimension= int(dim)
