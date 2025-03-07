@@ -62,10 +62,10 @@ def __knn_density_calc(distances_matrix, k, p, n): # p is the dimension
 def __calculate_volume(d, radius):
     return ((np.pi)**(d/2) ) / math.gamma((d/2) + 1) * (radius**d)
 
-'''
-The following formula uses formula for n- dimesional sphere 
-$$ p_k(x)  =\frac{k}{n} \frac{1}{ \frac{\pi^{p/2}}{\Gamma(p/2+1)}  \|x-x_k \|^p}.$$
-'''
+# '''
+# The following formula uses formula for n- dimesional sphere 
+# $$ p_k(x)  =\frac{k}{n} \frac{1}{ \frac{\pi^{p/2}}{\Gamma(p/2+1)}  \|x-x_k \|^p}.$$
+# '''
 
 
 

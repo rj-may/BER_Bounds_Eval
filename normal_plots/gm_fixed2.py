@@ -70,10 +70,9 @@ def main(dim = 3):
                 
         if  i < 250:
             threads = 5
-        elif i < 500:
+        elif i < 600:
             threads = 10 # was 8
-        elif i < 1000:
-            threads = 16
+
         else:
             threads = 20
 

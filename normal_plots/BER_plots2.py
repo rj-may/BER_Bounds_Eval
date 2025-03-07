@@ -29,7 +29,7 @@ from modules.constants import MC_num
 
 sample_size= 1000
 
-threads =16
+threads =20
 ######
 
 dx = 0.001
