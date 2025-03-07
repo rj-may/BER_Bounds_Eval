@@ -31,18 +31,12 @@ from modules.multi_bounds_parfor import bounds_class
 from modules.knn_density import knn_num_calc
 # from modules.data_gen import data_gen
 from modules.data_gen_mv import data_gen_multivariate
+from modules.constants import MC_num, sample_sizes 
 
 
-# sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
-
-start = math.log10(54)
-end = math.log10(5000)
-
-sample_sizes = np.logspace(start, end+.00001, 11, dtype=int)
 
 print(sample_sizes)
 
-MC_num = 400
 
 
 

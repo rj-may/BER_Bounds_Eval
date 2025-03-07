@@ -123,6 +123,43 @@ class bounds_class:
 
         return values_dict
     
+    
+    def mse_bounds(self, BER):
+        """Compute the Mean Squared Error (MSE) between the given BER and computed bounds."""
+        
+        # Convert BER to an array of the same size
+        true_values = np.ones(self.__MC_num) * BER
+
+        # Retrieve the bounds
+        dp_bounds_l, dp_bounds_u = self.get_bounds_dp()
+        bha_bounds_l, bha_bounds_u = self.get_bounds_Bha()
+        bha_knn_bounds_l, bha_knn_bounds_u = self.get_bounds_Bha_knn()
+        tight_bounds_l, tight_bounds_u = self.get_bounds_tight()
+        inf_l, inf_u = self.get_inf_bounds()
+        enDive_l, enDive_u = self.get_Bounds_enDive()
+
+        # Define a helper function to calculate MSE
+        def mse(true, estimated):
+            return np.mean((true - np.array(estimated))**2) if estimated is not None and len(estimated) > 0 else np.nan
+
+        # Compute MSE for each bound type
+        mse_values = {
+            "Bha_lower": mse(true_values, bha_bounds_l),
+            "Bha_upper": mse(true_values, bha_bounds_u),
+            "Bha_knn_lower": mse(true_values, bha_knn_bounds_l),
+            "Bha_knn_upper": mse(true_values, bha_knn_bounds_u),
+            "inf_lower": mse(true_values, inf_l),
+            "inf_upper": mse(true_values, inf_u),
+            "Dp_lower": mse(true_values, dp_bounds_l),
+            "Dp_upper": mse(true_values, dp_bounds_u),
+            "enDive_lower": mse(true_values, enDive_l),
+            "enDive_upper": mse(true_values, enDive_u),
+            "tight_lower": mse(true_values, tight_bounds_l),
+            "tight_upper": mse(true_values, tight_bounds_u)
+        }
+
+        return mse_values
+
     def experimental_validity(self):
         exp_BER = self.__obs_BER
 
@@ -200,6 +237,8 @@ class bounds_class:
     def get_inf_bounds(self):
         return self.__lower_bounds_inf, self.__upper_bounds_inf
     def get_Bounds_enDive(self):
+        return self.__lower_bounds_enDive, self.__upper_bounds_enDive
+    def get_bounds_enDive(self):
         return self.__lower_bounds_enDive, self.__upper_bounds_enDive
 
     def __str__(self):

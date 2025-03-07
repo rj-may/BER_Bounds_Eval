@@ -28,14 +28,8 @@ sys.path.append(updated_directory)
 from modules.multi_bounds_parfor import bounds_class
 from modules.knn_density import knn_num_calc
 from modules.data_gen import data_gen
+from modules.constants import MC_num, sample_sizes 
 
-
-# sample_sizes = np.logspace(2, 3.3011, 9 , endpoint = True, dtype = int)
-
-start = math.log10(54)
-end = math.log10(5000)
-
-sample_sizes = np.logspace(start, end+.00001, 11, dtype=int)
 
 print(sample_sizes)
 
@@ -47,7 +41,6 @@ def main(dim = 3):
     print("Computing normal beta with dimension " + dim_str)
 
 
-    MC_num = 400
 
     bound_obj_lst = []
 
@@ -72,10 +65,8 @@ def main(dim = 3):
         
         if  i < 250:
             threads = 5
-        elif i < 500:
+        elif i < 600:
             threads = 10 # was 8
-        elif i < 1000:
-            threads = 16
         else:
             threads = 20
 

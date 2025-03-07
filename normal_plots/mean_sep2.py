@@ -21,10 +21,12 @@ updated_directory = os.getcwd()
 print("Updated Directory:", updated_directory)
 sys.path.append(updated_directory)
 
+
+from modules.constants import MC_num 
+
 #######
 #TODO 
 
-MC_num = 400
 sample_size= 1000
 threads = 20
 
