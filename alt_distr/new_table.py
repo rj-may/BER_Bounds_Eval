@@ -32,11 +32,12 @@ from modules.multi_bounds_parfor import bounds_class
 from modules.knn_density import knn_num_calc
 from modules.data_gen import data_gen
 from modules.data_gen_gauss_mix import data_gen_gauss_mix
+from modules.constants import MC_num 
 
 
 
 
-sample_sizes = [100, 2000]
+sample_sizes = [50, 100, 2000, 5000]
 
 print(sample_sizes)
 
@@ -85,7 +86,6 @@ def main(dim = 3):
 
     data_gen_list = [generator1, generator2, generator3, generator4]
 
-    MC_num = 400
 
 
 

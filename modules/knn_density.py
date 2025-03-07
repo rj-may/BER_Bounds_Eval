@@ -56,7 +56,7 @@ def __knn_density_calc(distances_matrix, k, p, n): # p is the dimension
         # print("N", n)
         # print("K", k)
         # print("vol", vol)
-        vec[i] =  k /  ( n * vol  ) ### some people use k-1 for variance purposes
+        vec[i] =  (k-1) /  ( n * vol  ) ###  people use k-1 for variance purposes
     return vec
 
 def __calculate_volume(d, radius):
@@ -70,11 +70,14 @@ $$ p_k(x)  =\frac{k}{n} \frac{1}{ \frac{\pi^{p/2}}{\Gamma(p/2+1)}  \|x-x_k \|^p}
 
 
 def knn_num_calc(N, d):# N is size of set and d is dimension
+    if d < 3 :
+        print("This function doesn't work for dimension <3")
     mult = __multiplier(d)
     N_exp = N**(4/ (d+4))
     val=  round( mult * N_exp)
-    if d <=2:
-        print("This function doesn't work for dimension <3")
+    if val < 3:
+        print(val,  " was calculated for k. 3 is chosen for k for variance purposes.")
+        val = 3
     return val
 
 
