@@ -37,6 +37,6 @@ eng.quit()
 If you do not have access to matlab and the matlab engine,  that argument can be omitted
 
 ```
-results= bounds_calculator(class0, class1, MATLAB = eng)
+results= bounds_calculator(class0, class1, MATLAB = None)
 
 ```
