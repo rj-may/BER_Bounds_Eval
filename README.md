@@ -1,10 +1,12 @@
 
 ## Bayes Error Project  
+Repo created as a part of MS research at Utah State University 
 
 #### Researcher:  Riley May 
 
 
-I will be  running simulation-based comparisons of different methods of estimating Bayes Error Rate performance bounds under various conditions, including different sample sizes, numbers of dimensions, and distribution types. I will also be generating visualizations to summarize performance differences and reporting on the results of these simulations.
+I ran simulation-based comparisons of different methods of estimating Bayes Error Rate performance bounds under various conditions, including different sample sizes, numbers of dimensions, and distribution types. I also be generated visualizations to summarize performance differences and reporting on the results of these simulations.
+
 
 
 
