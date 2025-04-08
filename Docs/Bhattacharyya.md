@@ -1,5 +1,5 @@
 # Bhattacharyya Bounds Calculator Software Manual
- ```Bhattacharyya_bounds.py```
+ ```Bhattacharyya_func.py```
 
 Introduction
 
