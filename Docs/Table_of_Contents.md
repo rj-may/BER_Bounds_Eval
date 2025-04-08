@@ -6,4 +6,3 @@ Classes python files
 
 [Dp_bounds.py](https://github.com/rj-may/MS_Research/blob/master/Docs/dp_bounds.md)
 
-[Dp_bounds_threaded.py](https://github.com/rj-may/MS_Research/blob/master/Docs/dp_bounds.md#threaded-example)
