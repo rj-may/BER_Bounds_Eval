@@ -5,9 +5,11 @@ from modules.tight_knn_func import __calc_tight_bounds_via_knn_density
 from modules.Bhatt_knn_func import __calc_bha_knn_bounds
 from modules.knn_density import get_knn_densities
 
+import time
+
 import math
 
-def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= None):
+def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= None, Timer = False):
     """
     Calculate all bounds for a single simulation.
 
@@ -25,17 +27,29 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
 
     results = {}
     
-        
+    if Timer:
+        start = time.time()
+        timer_results = {}
 
     # Calculate DP bounds
     dp_l, dp_u = get_bounds_dp(data0, data1, handle_errors="worst")
     results["dp_lower"] = dp_l
     results["dp_upper"] = dp_u
 
+    if Timer:
+        timer_results["Dp"] = time.time() - start
+        start = time.time()
+    
+
     # Calculate Bhattacharyya bounds
     bha_l, bha_u = get_Bhattacharyya_bounds(data0, data1, handle_errors="worst")
     results["Bhattacharyya_lower"] = bha_l
     results["Bhattacharyya_upper"] = bha_u
+
+    if Timer:
+        timer_results["Bhattacharyya"] = time.time() - start
+        start = time.time()
+    
 
     # Calculate tight bounds
     p0, p1 = get_knn_densities(data0, data1, k_nn)
@@ -43,13 +57,27 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
     prior0 = len(data0) / (len(data0) + len(data1))
     prior1 = len(data1) / (len(data0) + len(data1))
 
+    if Timer:
+        knn_time = time.time() - start
+        start = time.time()
+
+
     tight_l, tight_u = __calc_tight_bounds_via_knn_density(p0, p1, prior0, prior1, alpha=alpha_tight)
     results["tight_lower"] = tight_l
     results["tight_upper"] = tight_u
 
+    if Timer:
+        # timer_results["tight"]  = time.time() - start + knn_time
+        start = time.time()
+    
+
     a, b = __calc_bha_knn_bounds(p0, p1, prior0, prior1,  handle_errors= "worst")
     results["Bha_knn_lower"] = a
     results["Bha_knn_upper"] = b
+    
+    if Timer:
+        timer_results["Bha_knn"]  = time.time() - start + knn_time
+        start = time.time()
 
 
     # # Calculate Mahalanobis bounds
@@ -64,7 +92,10 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
 
             eng =  MATLAB
 
-            eng.addpath('modules', nargout=0)            
+            eng.addpath('modules', nargout=0)
+
+            if Timer:
+                start = time.time()
             
             Dp = eng.EnDive(data0, data1, 'type', "DP", 'quiet', 'kernel', kernel, 'est', 2, nargout=1)
             p = prior0
@@ -79,6 +110,10 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
                 enDive_l, enDive_u = 0.5, 0.5
             results["enDive_lower"] = enDive_l
             results["enDive_upper"] = enDive_u
+
+            if Timer:
+                timer_results["EnDive"] = time.time() - start
+                start = time.time()
 
             estim = eng.hellingerDivergence(data0, data1,[], [],  nargout= 1)
             BC = 1 - estim
@@ -95,8 +130,14 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
             results["influence_lower"] = low
             results["influence_upper"] = up
 
+            if Timer:
+                timer_results["Influence"] = time.time() - start
+                start = time.time()
+
         else:
             print("A MATLAB engine was not provided. ")
 
-
-    return results
+    if Timer:
+        return results, timer_results
+    else:
+        return results

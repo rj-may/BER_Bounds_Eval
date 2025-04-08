@@ -124,9 +124,10 @@ class bounds_class:
         return values_dict
     
     
-    def mse_bounds(self, BER):
-        """Compute the Mean Squared Error (MSE) between the given BER and computed bounds."""
-        
+    def mae_bounds(self, BER):
+        """Compute the Mean Absolute Error (MAE) between the given BER and computed bounds,
+        considering invalid bounds and choosing the closer bound when applicable."""
+
         # Convert BER to an array of the same size
         true_values = np.ones(self.__MC_num) * BER
 
@@ -138,27 +139,86 @@ class bounds_class:
         inf_l, inf_u = self.get_inf_bounds()
         enDive_l, enDive_u = self.get_Bounds_enDive()
 
-        # Define a helper function to calculate MSE
-        def mse(true, estimated):
-            return np.mean((true - np.array(estimated))**2) if estimated is not None and len(estimated) > 0 else np.nan
+        # Define a helper function to compute MSE considering invalid bounds
+        def mae(true, lower, upper):
+            if lower is None or upper is None or len(lower) == 0 or len(upper) == 0:
+                return np.nan  # No valid bounds available
+
+            # Identify invalid bounds
+            invalid_mask = (true < lower) | (true > upper)
+
+            # Compute squared error by choosing the closer bound
+            lower_error = np.abs(true - lower) 
+            upper_error = np.abs(true - upper) 
+            chosen_error = np.minimum(lower_error, upper_error)
+
+            # Set error to 0 where the bound is valid
+            chosen_error[~invalid_mask] = 0
+            # print(chosen_error)
+
+            return np.mean(chosen_error)
 
         # Compute MSE for each bound type
         mse_values = {
-            "Bha_lower": mse(true_values, bha_bounds_l),
-            "Bha_upper": mse(true_values, bha_bounds_u),
-            "Bha_knn_lower": mse(true_values, bha_knn_bounds_l),
-            "Bha_knn_upper": mse(true_values, bha_knn_bounds_u),
-            "inf_lower": mse(true_values, inf_l),
-            "inf_upper": mse(true_values, inf_u),
-            "Dp_lower": mse(true_values, dp_bounds_l),
-            "Dp_upper": mse(true_values, dp_bounds_u),
-            "enDive_lower": mse(true_values, enDive_l),
-            "enDive_upper": mse(true_values, enDive_u),
-            "tight_lower": mse(true_values, tight_bounds_l),
-            "tight_upper": mse(true_values, tight_bounds_u)
+            "Dp": mae(true_values, dp_bounds_l, dp_bounds_u),
+            "Bha": mae(true_values, bha_bounds_l, bha_bounds_u),
+            "Bha_knn": mae(true_values, bha_knn_bounds_l, bha_knn_bounds_u),
+            "tight": mae(true_values, tight_bounds_l, tight_bounds_u),
+            "inf": mae(true_values, inf_l, inf_u),
+            "enDive": mae(true_values, enDive_l, enDive_u),
         }
 
         return mse_values
+
+
+    def mae_bounds_conditional(self, BER):
+        """Compute the Mean Absolute Error (MAE) between the given BER and computed bounds,
+        considering invalid bounds and choosing the closer bound when applicable."""
+
+        # Convert BER to an array of the same size
+        true_values = np.ones(self.__MC_num) * BER
+
+        # Retrieve the bounds
+        dp_bounds_l, dp_bounds_u = self.get_bounds_dp()
+        bha_bounds_l, bha_bounds_u = self.get_bounds_Bha()
+        bha_knn_bounds_l, bha_knn_bounds_u = self.get_bounds_Bha_knn()
+        tight_bounds_l, tight_bounds_u = self.get_bounds_tight()
+        inf_l, inf_u = self.get_inf_bounds()
+        enDive_l, enDive_u = self.get_Bounds_enDive()
+
+        # Define a helper function to compute MSE considering invalid bounds
+        def mae2(true, lower, upper):
+            if lower is None or upper is None or len(lower) == 0 or len(upper) == 0:
+                return np.nan  # No valid bounds available
+
+            # Identify invalid bounds
+            invalid_mask = (true < lower) | (true > upper)
+
+            # Compute squared error by choosing the closer bound
+            lower_error = np.abs(true - lower) 
+            upper_error = np.abs(true - upper) 
+            chosen_error = np.minimum(lower_error, upper_error)
+
+            chosen_error_subset = chosen_error[invalid_mask]
+            # print(len(chosen_error_subset))
+
+            if len(chosen_error_subset)>0:
+                return np.mean(chosen_error_subset)
+            else:
+                return 0
+            
+        # Compute MSE for each bound type
+        mse_values = {
+            "Dp": mae2(true_values, dp_bounds_l, dp_bounds_u),
+            "Bha": mae2(true_values, bha_bounds_l, bha_bounds_u),
+            "Bha_knn": mae2(true_values, bha_knn_bounds_l, bha_knn_bounds_u),
+            "tight": mae2(true_values, tight_bounds_l, tight_bounds_u),
+            "inf": mae2(true_values, inf_l, inf_u),
+            "enDive": mae2(true_values, enDive_l, enDive_u),
+        }
+
+        return mse_values
+
 
     def experimental_validity(self):
         exp_BER = self.__obs_BER
