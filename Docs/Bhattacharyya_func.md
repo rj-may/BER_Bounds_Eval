@@ -20,7 +20,11 @@ Make sure to have the necessary libraries installed:    ``` numpy ```
 Usage
 
 ## Example Usage
-    lower_bound, upper_bound = Bhattacharyya_bounds(data0, data1, assume_even=Fals )
+   
+
+    from modules.Bhattacharyyya_func import  get_Bhattacharyya_bounds
+    
+    lower_bound, upper_bound = get_Bhattacharyya_bounds(data0, data1, assume_even=Fals )
 
     upper_Maha =  get_Maha_upper(data0, data1, assume_even = False):
 
