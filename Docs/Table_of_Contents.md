@@ -8,6 +8,7 @@ The $D_p$ bounds (Henze-Penrose) using a minimum spanning tree. [dp_func.py](htt
 
 $k$-Nearest Neighbor Density Estimation. [knn_density.py doc](https://github.com/rj-may/BER_Bounds_Eval/blob/master/Docs/knn_density.md) (not a bound)
 
+Arbitrarily tight bounds using k-Nearest Neighbors density [tigh_knn_func doc](https://github.com/rj-may/BER_Bounds_Eval/blob/master/Docs/knn_density.md)
 
 ##### Not my work but included here. 
 
