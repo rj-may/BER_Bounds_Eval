@@ -68,14 +68,15 @@ def main(dim =3):
         
         k = knn_num_calc(i, dimension)
         
+        
         if  i < 250:
             threads = 5
-        elif i < 500:
+        elif i < 501:
             threads = 10 # was 8
-        elif i < 1000:
-            threads = 16
+
         else:
             threads = 20
+            
         bounds = bounds_class(generator, eng,  sample_size = sample_size, threads =threads,  MC_num = MC_num, k_nn  =k )
         
         bound_obj_lst.append(bounds)        

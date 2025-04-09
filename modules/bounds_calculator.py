@@ -112,7 +112,7 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
             results["enDive_upper"] = enDive_u
 
             if Timer:
-                timer_results["EnDive"] = time.time() - start
+                timer_results["enDive"] = time.time() - start
                 start = time.time()
 
             estim = eng.hellingerDivergence(data0, data1,[], [],  nargout= 1)
@@ -131,7 +131,7 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
             results["influence_upper"] = up
 
             if Timer:
-                timer_results["Influence"] = time.time() - start
+                timer_results["influence"] = time.time() - start
                 start = time.time()
 
         else:

@@ -44,23 +44,23 @@ def __calc_bha_knn_bounds(p0, p1, P_c0, P_c1, handle_errors):
 
 
 # def __Bhattacharyya_coef_via_knn(data0, data1, k) :
-    X = np.concatenate([data0, data1])# merge two class data sets to get our X space
+    # X = np.concatenate([data0, data1])# merge two class data sets to get our X space
 
-    p = len(data0[0]) ## the dimension of the data sets
-    n0 = len(data0)
-    n1 = len(data1)
+    # p = len(data0[0]) ## the dimension of the data sets
+    # n0 = len(data0)
+    # n1 = len(data1)
 
-    # Fit k-Nearest Neighbors model and get densitities for data set 1
-    knn = NearestNeighbors(n_neighbors=k, algorithm = 'auto')
-    knn.fit(data0)
-    distances, indices = knn.kneighbors(X) # get distance to the  1,2,... kth nearest neighbor across the space x
-    density0 = __knn_density_calc(distances, k, p, n0) ## calculate density based off the distances, k, dim, and sample size
+    # # Fit k-Nearest Neighbors model and get densitities for data set 1
+    # knn = NearestNeighbors(n_neighbors=k, algorithm = 'auto')
+    # knn.fit(data0)
+    # distances, indices = knn.kneighbors(X) # get distance to the  1,2,... kth nearest neighbor across the space x
+    # density0 = __knn_density_calc(distances, k, p, n0) ## calculate density based off the distances, k, dim, and sample size
 
-    # Fit k-Nearest Neighbors model and get densitities for data set 2
-    knn = NearestNeighbors(n_neighbors=k, algorithm= 'auto')
-    knn.fit(data1)
-    distances, indices = knn.kneighbors(X)    
-    density1 = __knn_density_calc(distances, k, p, n1)
+    # # Fit k-Nearest Neighbors model and get densitities for data set 2
+    # knn = NearestNeighbors(n_neighbors=k, algorithm= 'auto')
+    # knn.fit(data1)
+    # distances, indices = knn.kneighbors(X)    
+    # density1 = __knn_density_calc(distances, k, p, n1)
 
     # print(sum(density0), sum(density1))
     ### VERSION 1
