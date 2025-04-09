@@ -16,6 +16,6 @@ class 0 will have a low value for the density at the location of the class 1 poi
     p0, p1 get_knn_densities(data0, data1, k=0) 
 
 
-If someone wants to just get a good value for $k$, then the following funciton can be used where $N$ is the number of samples and $D$ is the density. 
+If someone wants to just get a good value for $k$ based off a normal assumption , then the following funciton can be used where $N$ is the number of samples and $D$ is the number of dimensiosn. 
 
     k = knn_num_calc(N,D)
