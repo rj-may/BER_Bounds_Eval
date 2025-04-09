@@ -1,5 +1,7 @@
 # Knn Density  Software Manual
 
+For file knn_density.py
+
 
 This function calculates the $k$ -Nearest neighbor density for given two classes of data. A value for $k$ is recommended to be provided, but if it is not available $k$ 
 will be calculated using a normal assumption. 
