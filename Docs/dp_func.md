@@ -7,6 +7,7 @@
 Introduction
 
 The DP Bounds function is a Python tool designed to calculate lower and upper bounds for the using a divergence measure defined [here](https://ieeexplore.ieee.org/document/7254229) (DP).
+It relies on scipy to calculate a minimum spanning tree. 
 
 The function to use is written as 
 `get_bounds_dp(data0, data1, handle_errors = "worst"):`
