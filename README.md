@@ -12,10 +12,12 @@ I ran simulation-based comparisons of different methods of estimating Bayes Erro
 
 ### Code description
 
-I am going to try and provide up to date code descriptions of in the software manual
-[here](https://github.com/rj-may/MS_Research/blob/master/Docs/Table_of_Contents.md) .
+Software manual for using the code in this repo is 
+[here](https://github.com/rj-may/MS_Research/blob/master/Docs/Table_of_Contents.md) . Included here is documentation on the bounds_calculator function that is shown in the demo. 
+
 
 The most useful code to other research is most likley the the code found within modules. That is the code used to calculate bounds and run the scenarios as presented in research. 
+
 
 
 ### demo
