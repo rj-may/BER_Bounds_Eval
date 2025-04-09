@@ -7,7 +7,7 @@ The following matlab files found in the modules are not from my own creation. I 
   - EnDive.m
   - calculateWeightsKDE.m
   - calculateWeightsKDE_cvx.m
-  - Note ths doesn't include two other files necessary for full utility of the EnDive stimator. 
+  - Note this doesn't include two other files necessary for full utility of the EnDive stimator. 
 
 
 The code was used in the followin way in this repo. 
