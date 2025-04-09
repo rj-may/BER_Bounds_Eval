@@ -1,7 +1,6 @@
 # Knn Density  Software Manual
 
-For file knn_density.py
-
+For file knn_density.py and knn_density_scipy.py. It is recommended that the SciPy version be used for one less package import. They function the same. The original was built using scikit-learn's nearest neighbors. However, scikit-learn is built on SciPy, so they should function the same. This was tested and exactly the same bounds were calculated over large sample sizes. 
 
 This function calculates the $k$ -Nearest neighbor density for given two classes of data. A value for $k$ is recommended to be provided, but if it is not available $k$ 
 will be calculated using a normal assumption. 
