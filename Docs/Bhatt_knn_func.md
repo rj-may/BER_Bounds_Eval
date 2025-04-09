@@ -1,4 +1,4 @@
-# Aribtrarily Tight Bounds using K-nn Density  Software Manual
+# Bhattacharyya Bounds using K-nn Density  Software Manual
 
 This bound function uses the Bhattacharyya bounds and $k$-NN density estimates to get the Bhattacharyya bounds. 
 
