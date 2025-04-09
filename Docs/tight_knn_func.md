@@ -18,5 +18,5 @@ For a simple example of working with this funciton.
 
 If one already has the density functions and their priors, the following can be used instead
      
-     lower, upper, __calc_tight_bounds_via_knn_density(density0, density1, prior_c0, prior_c1,  alpha)
+     lower, upper = __calc_tight_bounds_via_knn_density(density0, density1, prior_c0, prior_c1,  alpha)
 
