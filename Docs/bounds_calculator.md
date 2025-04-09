@@ -21,7 +21,7 @@ The methods labeled with asterick * require the use of a maltlab engine. If you 
     
     eng.quit()
 
-To use the bounds calculator it will require the use of sci-py, scikit-learn, numpy, and matlab.engine to get every bound.
+To use the bounds calculator it will require the use of sci-py, numpy, matlab.engine and scikit-learn*(optional see below) to get every bound.
 
 
 ## output
@@ -44,11 +44,12 @@ a list. Then use Pandas or something else to make a dataframe from it.
 
 
 ## Further use and Tmer
-bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= None, Timer = False)
+    bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= None, Timer = False, sckitlearn= False)
 
-  -k-NN is the number to use for the k_nn density. If you don't give one or give 0, it will be calculated for you. 
-  -alpha is for the arbitrarily tight bounds. 
-  -kernel is for the Ensemble Divergence methods (EnDive). 
+  - k-NN is the number to use for the k_nn density. If you don't give one or give 0, it will be calculated for you. 
+  - alpha is for the arbitrarily tight bounds. 
+  - kernel is for the Ensemble Divergence methods (EnDive). 
   - Timer if set to true this changes the output. THis gives the time to calculate the bounds as well as the result .
       - results, times = bounds_calculator(data0, data1,  Timer = True)
+  - Only set sckitlearn equal to True if you are paranoid about replicating my results. This just uses scikitlearn to calculate the nearest neighobrs which was how everything was cacluated. But Scikit-Learn is built on scipy, so having scikitlearn just uses scipy directly and is one less package. .
 
