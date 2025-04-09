@@ -44,7 +44,7 @@ a list. Then use Pandas or something else to make a dataframe from it.
 
 
 ## Further use and Tmer
-bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= None, Timer = False, sckitlearn= False)
+    bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= None, Timer = False, sckitlearn= False)
 
   -k-NN is the number to use for the k_nn density. If you don't give one or give 0, it will be calculated for you. 
   -alpha is for the arbitrarily tight bounds. 
