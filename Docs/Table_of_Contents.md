@@ -7,7 +7,7 @@ The Bounds Caculator calculates all the bounds at once.  [Bounds Calculator](htt
 
 
 
-## Bound Calculator files
+## Bound individual files/functions
 Parametric Battacharyya [Bhattacharyya_func.py doc](https://github.com/rj-may/MS_Research/edit/master/Docs/Bhattacharyya_func.md)
 
 The $D_p$ bounds (Henze-Penrose) using a minimum spanning tree. [dp_func.py doc](https://github.com/rj-may/MS_Research/blob/master/Docs/dp_func.md)
