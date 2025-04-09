@@ -1,11 +1,14 @@
 # Software Manual  Table of Contents
 
-Classes python files
-
+Bound Calculator files
 Parametric Battacharyya [Bhattacharyya_func.py](https://github.com/rj-may/MS_Research/edit/master/Docs/Bhattacharyya_func.md)
 
 The $D_p$ bounds (Henze-Penrose) using a minimum spanning tree. [dp_func.py](https://github.com/rj-may/MS_Research/blob/master/Docs/dp_func.md)
 
+
+
+
+##### Not my work but included here. 
 
 Influence Estimator [influence](https://github.com/rj-may/BER_Bounds_Eval/blob/master/Docs/Influence.md)
 
