@@ -6,7 +6,7 @@ Parametric Battacharyya [Bhattacharyya_func.py](https://github.com/rj-may/MS_Res
 The $D_p$ bounds (Henze-Penrose) using a minimum spanning tree. [dp_func.py](https://github.com/rj-may/MS_Research/blob/master/Docs/dp_func.md)
 
 
-$k$-Nearest Neighbor Density Estimation. [knn_density.py doc](https://github.com/rj-may/BER_Bounds_Eval/blob/master/Docs/knn_density.md)
+$k$-Nearest Neighbor Density Estimation. [knn_density.py doc](https://github.com/rj-may/BER_Bounds_Eval/blob/master/Docs/knn_density.md) (not a bound)
 
 
 ##### Not my work but included here. 
