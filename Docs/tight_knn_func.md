@@ -9,7 +9,7 @@ This document is for the code found in `tight_knn_func.py`. The bounds are calcu
 For a simple example of working with this funciton.
 
 
-    from modules.tight_kn_func import get_tight_bounds_knn
+    from modules.tight_knn_func import get_tight_bounds_knn
 
     lower, upper = get_tight_bounds_knn(data, data1, alpha = 50, k=0)
 
