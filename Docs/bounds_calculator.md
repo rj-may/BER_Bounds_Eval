@@ -21,7 +21,7 @@ The methods labeled with asterick * require the use of a maltlab engine. If you 
     
     eng.quit()
 
-To use the bounds calculator it will require the use of sci-py, scikit-learn*(see below), numpy, and matlab.engine to get every bound.
+To use the bounds calculator it will require the use of sci-py, numpy, matlab.engine and scikit-learn*(optional see below) to get every bound.
 
 
 ## output
