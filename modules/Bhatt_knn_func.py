@@ -1,9 +1,4 @@
-''' only run this if you have sklearnex downloaded'''
-# import sklearnex
-# from sklearnex import patch_sklearn
-# patch_sklearn()
 
-from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import math
 
@@ -79,11 +74,11 @@ def __calc_bha_knn_bounds(p0, p1, P_c0, P_c1, handle_errors):
     # BC = np.sum(np.sqrt(Px_c0 * Px_c1))
 
     # VERSION 2
-    p0 = density0 / sum(density0)
-    p1 = density1 / sum(density1)
-    BC= np.sum(np.sqrt(p0 * p1))
+    # p0 = density0 / sum(density0)
+    # p1 = density1 / sum(density1)
+    # BC= np.sum(np.sqrt(p0 * p1))
 
-    return BC
+    # return BC
 
 
 

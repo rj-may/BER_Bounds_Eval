@@ -9,7 +9,7 @@ import time
 
 import math
 
-def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= None, Timer = False):
+def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MATLAB= None, Timer = False,  scikitlearn = False):
     """
     Calculate all bounds for a single simulation.
 
@@ -19,11 +19,19 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
         k_nn: Number of neighbors for k-NN-based methods.
         alpha_tight: Alpha parameter for tight bounds calculation.
         kernel: Kernel type for methods like enDive.
-        handle_errors_dict: Dictionary of error handling settings for bounds methods.
+        MATLAB: engine that is used to calculate MATLAB functions
+        Timer: Decides if we should return a timer also. (WARNING creates a second return)
+        scikitlearn : if you have the sckilearn package and want to use that instead use it. 
 
     Returns:
         A dictionary with lower and upper bounds for each calculated bound type.
     """
+        # Calculate tight bounds
+    if scikitlearn:
+        from modules.knn_density import get_knn_densities
+
+    else:
+        from modules.knn_density_scipy import get_knn_densities
 
     results = {}
     
@@ -51,7 +59,8 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
         start = time.time()
     
 
-    # Calculate tight bounds
+
+    ## Calculating the functions with the k-NN densities
     p0, p1 = get_knn_densities(data0, data1, k_nn)
 
     prior0 = len(data0) / (len(data0) + len(data1))
