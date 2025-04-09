@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 import math
 
-def get_knn_densities(data0, data1, k) :
+def get_knn_densities(data0, data1, k=0) :
     if k == 0:
         k = knn_num_calc(len(data0), len(data0[0]))
     
