@@ -2,8 +2,13 @@
 import numpy as np
 import math
 
-from modules.knn_density import get_knn_densities
+try:
+    from modules.knn_density import get_knn_densities
 
+except ImportError:
+    from modules.knn_density_scipy import get_knn_densities
+
+    
 def Bhattacharyya_knn_bounds(data0, data1, k=0 , handle_errors = "worst"):
 
 

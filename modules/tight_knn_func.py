@@ -4,17 +4,14 @@ and a knn_density calculator for the distributions
 
  '''
 
-''' only run this if you have sklearnex downloaded'''
-# import sklearnex
-# from sklearnex import patch_sklearn
-# patch_sklearn()
-''' this is for optimization '''
 
-from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import math
+try:
+    from modules.knn_density import get_knn_densities
 
-from modules.knn_density import get_knn_densities
+except ImportError:
+    from modules.knn_density_scipy import get_knn_densities
 
 
 def get_tight_bounds_knn(data0, data1, alpha=50, k=0):
