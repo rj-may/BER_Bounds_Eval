@@ -3,7 +3,8 @@ from modules.Bhattacharyya_func import get_Bhattacharyya_bounds
 from modules.Bhattacharyya_func import get_Maha_upper
 from modules.tight_knn_func import __calc_tight_bounds_via_knn_density
 from modules.Bhatt_knn_func import __calc_bha_knn_bounds
-from modules.knn_density import get_knn_densities
+
+from oct2py import Oct2Py
 
 import time
 
@@ -94,19 +95,36 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
     # results["Mahalanobis_upper"] = maha_u
     # Calculate enDive bounds
 
-    if (MATLAB is not None):
+    if (MATLAB is not None) or True:
         import matlab.engine
 
-        if isinstance(MATLAB, matlab.engine.MatlabEngine):
+        if isinstance(MATLAB, matlab.engine.MatlabEngine) or True:
+            print("here")
 
-            eng =  MATLAB
+            # eng =  MATLAB
 
-            eng.addpath('modules', nargout=0)
+            # eng.addpath('modules', nargout=0)
+
+            oc = Oct2Py()
+            oc.addpath('modules')  # Equivalent to eng.addpath
+            oc.eval("pkg load statistics")
+            oc.eval("pkg load optim")
+            oc.eval("pkg load geometry")
+
 
             if Timer:
                 start = time.time()
             
-            Dp = eng.EnDive(data0, data1, 'type', "DP", 'quiet', 'kernel', kernel, 'est', 2, nargout=1)
+            Dp = oc.EnDive(data0, data1, 'type', "DP", 'quiet', 'kernel', kernel, 'est', 2, nargout=1)  
+            # Dp = oc.EnDive(data0, data1,
+            #    'quiet',  # bare flag, not key-value
+            #    func_args={
+            #        'type': "DP",
+            #        'kernel': kernel,
+            #        'est': 2
+            #    },
+            #    nargout=1)
+
             p = prior0
             q = prior1
             up = 4 * p * q * Dp  + (p-q)**2
@@ -124,7 +142,7 @@ def bounds_calculator(data0, data1, k_nn=0, alpha_tight=50, kernel='uniform', MA
                 timer_results["enDive"] = time.time() - start
                 start = time.time()
 
-            estim = eng.hellingerDivergence(data0, data1,[], [],  nargout= 1)
+            estim = oc.hellingerDivergence(data0, data1,[], [],  nargout= 1)
             BC = 1 - estim
 
             if  4 * prior0 * prior1 * BC**2  >1:

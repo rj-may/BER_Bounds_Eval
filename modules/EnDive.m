@@ -271,7 +271,8 @@ if ~hcustom
         fprintf('kmin: %i \nkmax: %i \n',kmin,kmax)
     end
     
-    [~,kdists]=knnsearch([X; Y],[X; Y],'k',kmax+1,'Distance',dist_type);
+    % [~,kdists]=knnsearch([X; Y],[X; Y],'k',kmax+1,'Distance',dist_type);
+    kdists = compute_knn_dists_manual(X, Y, kmax);
     if ~quiet
         fprintf('Choosing the %ith percentile distances among the data. \n',prc_thresh)
     end
@@ -329,4 +330,34 @@ if ~quiet
 if div_est<0
     fprintf( 'Warning! Ensemble estimator returned a value less than zero. \nThis may not be appropriate for the chosen divergence functional. \nConsider changing the bandwidth range and rerunning. \n')
 end
+end
+
+end  % <-- Add this to close the main function properly
+
+
+
+function kdists = compute_knn_dists_manual(X, Y, kmax)
+    % compute_knn_dists_manual - Compute k-NN distances without knnsearch
+    %
+    % Syntax: kdists = compute_knn_dists_manual(X, Y, kmax)
+    %
+    % Inputs:
+    %   X     - n-by-d matrix
+    %   Y     - m-by-d matrix
+    %   kmax  - max number of neighbors (excluding self)
+    %
+    % Outputs:
+    %   kdists - (n+m)-by-(kmax+1) matrix of distances to k+1 nearest neighbors
+    %            (including self at distance 0)
+
+    data = [X; Y];            % Combine data
+    N = size(data, 1);        % Total number of points
+
+    % Compute full pairwise squared Euclidean distance matrix
+    D = pdist2(data, data, 'euclidean');
+
+    % Sort distances row-wise and keep the kmax+1 smallest
+    % (first one is always 0 due to self-distance)
+    [sortedDists, ~] = sort(D, 2, 'ascend');
+    kdists = sortedDists(:, 1:(kmax + 1));
 end
