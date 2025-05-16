@@ -51,14 +51,14 @@ def __calculate_volume(d, radius):
 
 
 
-def knn_num_calc(N, d, supress = False):# N is size of set and d is dimension
+def knn_num_calc(N, d, message = True):# N is size of set and d is dimension
     if d < 3 :
         print("This function doesn't work for dimension <3")
     mult = __multiplier(d)
     N_exp = N**(4/ (d+4))
     val=  round( mult * N_exp)
     if val < 3:
-        if not supress:
+        if  message:
             print(val,  " was calculated for k. 3 is chosen for k for variance purposes.")
         val = 3
     return val

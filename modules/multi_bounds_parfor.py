@@ -18,7 +18,7 @@ import numpy as np
 import math
 import concurrent.futures  # Add this line to import the concurrent module
 
-accepted_distr = ["mv_normal"]
+# accepted_distr = ["mv_normal"]
 
 # accepted_bound_types =  ["dp","tight", "Bhattacharyya", "Bhatt_knn", "Mahalanobis", "influence", "enDive"]
 
